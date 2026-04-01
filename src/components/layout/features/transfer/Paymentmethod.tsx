@@ -1,181 +1,277 @@
-import { ArrowRight, Banknote, CreditCard, Landmark, ShieldCheck, Smartphone, Zap } from "lucide-react";
-import type { TransferData } from "../../../../types";
 import React from "react";
-import { motion } from "framer-motion";
-import { cn } from "../../../../lib/utils";
+import type { TransferData } from "../../../../types";
+
 interface PaymentMethodProps {
     onNext: (data: Partial<TransferData>) => void;
     onBack: () => void;
     data: Partial<TransferData>;
 }
+
+const methods = [
+    {
+        id: 'Manual Bank Transfer',
+        icon: '🏦',
+        title: 'Manual Bank Transfer',
+        tag: 'CHEAPEST',
+        description: 'Pay from your bank app or website',
+        fee: '0.00',
+        arrival: '1-3 business days',
+    },
+    {
+        id: 'Debit Card',
+        icon: '💳',
+        title: 'Debit Card',
+        tag: 'FASTEST',
+        description: 'Instant verification, simple checkout',
+        fee: '4.82',
+        arrival: 'Instant',
+    },
+    {
+        id: 'Apple / Google Pay',
+        icon: '📱',
+        title: 'Apple / Google Pay',
+        tag: '',
+        description: 'Use your saved biometric security',
+        fee: '5.12',
+        arrival: 'Instant',
+    },
+    {
+        id: 'Credit Card',
+        icon: '💰',
+        title: 'Credit Card',
+        tag: '',
+        description: 'Convenient but higher network fees',
+        fee: '12.45',
+        arrival: 'Instant',
+    },
+];
+
 export function Paymentmethod({ onNext, onBack, data }: PaymentMethodProps) {
     const [method, setMethod] = React.useState(data.paymentMethod || 'Manual Bank Transfer');
-
-    const methods = [
-        {
-            id: 'Manual Bank Transfer',
-            icon: <Landmark className="w-6 h-6" />,
-            title: 'Manual Bank Transfer',
-            tag: 'CHEAPEST',
-            description: 'Pay from your bank app or website',
-            fee: '0.00',
-            arrival: 'Arrives in 1-3 days'
-        },
-        {
-            id: 'Debit Card',
-            icon: <CreditCard className="w-6 h-6" />,
-            title: 'Debit Card',
-            tag: 'FASTEST',
-            description: 'Instant verification, simple checkout',
-            fee: '4.82',
-            arrival: 'Instant',
-            isFast: true
-        },
-        {
-            id: 'Apple / Google Pay',
-            icon: <Smartphone className="w-6 h-6" />,
-            title: 'Apple / Google Pay',
-            description: 'Use your saved biometric security',
-            fee: '5.12',
-            arrival: 'Instant',
-            isFast: true
-        },
-        {
-            id: 'Credit Card',
-            icon: <Banknote className="w-6 h-6" />,
-            title: 'Credit Card',
-            description: 'Convenient but higher network fees',
-            fee: '12.45',
-            arrival: 'Instant',
-            isFast: true
-        }
-    ];
 
     const recipientReceives = (data?.sendAmount ?? 0) * (data?.exchangeRate ?? 0);
     const totalToPay = (data?.sendAmount ?? 0) + (data?.fee ?? 0);
 
     return (
-        <div>
-            {/* <h1>Payment Method</h1> */}
-            {/* <p>How do you want to send the money?</p> */}
-            <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12"
-            >
-                <div className="lg:col-span-7 space-y-8">
-                    <div className="space-y-2">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-xs font-bold text-secondary uppercase tracking-widest">Step 03 of 05</span>
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Payment Method</span>
-                        </div>
-                        <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-secondary w-3/5 transition-all duration-500"></div>
-                        </div>
-                        <h2 className="text-4xl font-black text-primary font-headline mt-8">Choose payment method</h2>
-                    </div>
+        <div style={{ fontFamily: "'Tahoma', 'MS Sans Serif', 'Arial', sans-serif", fontSize: '11px', maxWidth: '780px', margin: '0 auto' }}>
 
-                    <div className="space-y-4">
-                        {methods.map((m) => (
-                            <button
-                                key={m.id}
-                                onClick={() => setMethod(m.id)}
-                                className={cn(
-                                    "w-full p-6 rounded-2xl border-2 transition-all flex items-center gap-6 text-left group",
-                                    method === m.id ? "border-primary bg-primary/5" : "border-slate-100 bg-white hover:border-slate-200"
-                                )}
+            {/* Wizard header */}
+            <div className="win-window" style={{ marginBottom: '10px' }}>
+                <div className="win-titlebar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                            <rect width="12" height="12" rx="1" fill="#3a6ea5" />
+                            <text x="2" y="10" fill="white" fontSize="7" fontWeight="bold" fontFamily="Arial">Z</text>
+                        </svg>
+                        <span>Zephyr Transfer Wizard — Step 3 of 4: Payment Method</span>
+                    </div>
+                </div>
+                <div style={{ padding: '6px 10px', backgroundColor: '#d4d0c8', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {[
+                        { num: 1, label: 'Amount', done: true },
+                        { num: 2, label: 'Recipient', done: true },
+                        { num: 3, label: 'Payment', active: true },
+                        { num: 4, label: 'Review' },
+                    ].map((s, i) => (
+                        <React.Fragment key={s.num}>
+                            {i > 0 && <div style={{ width: '20px', height: '1px', backgroundColor: '#808080' }} aria-hidden="true" />}
+                            <WizardStep {...s} />
+                        </React.Fragment>
+                    ))}
+                </div>
+            </div>
+
+            {/* Two-column layout */}
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+
+                {/* Left: payment methods */}
+                <div className="win-window" style={{ flex: 1 }}>
+                    <div style={{ padding: '12px', backgroundColor: '#d4d0c8' }}>
+
+                        <fieldset className="win-groupbox">
+                            <legend className="win-groupbox-label">Select Payment Method</legend>
+
+                            {/* Column header */}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '3px 6px',
+                                    backgroundColor: '#0a246a',
+                                    color: '#ffffff',
+                                    fontSize: '11px',
+                                    marginBottom: '2px',
+                                    fontWeight: 'bold',
+                                }}
+                                role="row"
                             >
-                                <div className={cn(
-                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
-                                    method === m.id ? "bg-primary text-white" : "bg-surface-container-high text-slate-400 group-hover:bg-slate-200"
-                                )}>
-                                    {m.icon}
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                    <div className="flex items-center gap-3">
-                                        <span className="font-bold text-primary">{m.title}</span>
-                                        {m.tag && <span className="text-[10px] font-black bg-secondary/10 text-secondary px-2 py-0.5 rounded uppercase tracking-wider">{m.tag}</span>}
+                                <span role="columnheader">Method</span>
+                                <span role="columnheader">Fee / Speed</span>
+                            </div>
+
+                            {/* Method rows */}
+                            {methods.map((m, i) => (
+                                <div
+                                    key={m.id}
+                                    onClick={() => setMethod(m.id)}
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '5px 6px',
+                                        cursor: 'pointer',
+                                        backgroundColor: method === m.id ? '#0a246a' : (i % 2 === 0 ? '#ffffff' : '#f0eeea'),
+                                        color: method === m.id ? '#ffffff' : '#000000',
+                                        borderBottom: '1px solid #e8e4dc',
+                                        fontSize: '11px',
+                                    }}
+                                    role="option"
+                                    aria-selected={method === m.id}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => e.key === 'Enter' && setMethod(m.id)}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value={m.id}
+                                            checked={method === m.id}
+                                            onChange={() => setMethod(m.id)}
+                                            style={{ cursor: 'pointer' }}
+                                            aria-label={m.title}
+                                        />
+                                        <div>
+                                            <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                {m.title}
+                                                {m.tag && (
+                                                    <span
+                                                        style={{
+                                                            fontSize: '9px',
+                                                            fontWeight: 'bold',
+                                                            padding: '1px 4px',
+                                                            backgroundColor: method === m.id ? '#7ec8ff' : '#d4ead4',
+                                                            color: '#000000',
+                                                            border: '1px solid #808080',
+                                                        }}
+                                                    >
+                                                        {m.tag}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div style={{ fontSize: '10px', opacity: 0.8 }}>{m.description}</div>
+                                        </div>
                                     </div>
-                                    <p className="text-sm text-on-surface-variant">{m.description}</p>
-                                </div>
-                                <div className="text-right space-y-1">
-                                    <div className="font-bold text-primary">£{m.fee} fee</div>
-                                    <div className="flex items-center justify-end gap-1 text-xs font-medium text-on-surface-variant">
-                                        {m.isFast && <Zap size={12} className="text-secondary" />}
-                                        {m.arrival}
+                                    <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '12px' }}>
+                                        <div style={{ fontWeight: 'bold' }}>£{m.fee}</div>
+                                        <div style={{ fontSize: '10px', opacity: 0.8 }}>{m.arrival}</div>
                                     </div>
                                 </div>
+                            ))}
+                        </fieldset>
+
+                        <hr className="win-sep-h" />
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                            <button onClick={onBack} className="win-btn">&lt; Back</button>
+                            <button
+                                onClick={() => onNext({ paymentMethod: method })}
+                                className="win-btn win-btn-primary"
+                                style={{ minWidth: '130px', fontWeight: 'bold' }}
+                            >
+                                Next &gt; Review
                             </button>
-                        ))}
+                            <button onClick={onBack} className="win-btn">Cancel</button>
+                        </div>
                     </div>
+                </div>
 
-                    <div className="flex items-center justify-between pt-4">
-                        <button onClick={onBack} className="text-primary font-bold hover:underline">Go Back</button>
-                        <button
-                            onClick={() => onNext({ paymentMethod: method })}
-                            className="bg-emerald-500 text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+                {/* Right: summary panel */}
+                <div className="win-window" style={{ width: '220px', flexShrink: 0 }}>
+                    <div className="win-titlebar" style={{ padding: '2px 6px' }}>
+                        <span style={{ fontSize: '11px' }}>Transfer Summary</span>
+                    </div>
+                    <div style={{ padding: '10px', backgroundColor: '#d4d0c8', fontSize: '11px' }}>
+
+                        <SummaryRow label="You Send:" value={`${data.sendAmount?.toLocaleString()} ${data.sendCurrency?.code}`} />
+                        <SummaryRow label="Recipient Gets:" value={`${recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${data.receiveCurrency?.code}`} highlight />
+
+                        <hr className="win-sep-h" />
+
+                        <SummaryRow label="Rate:" value={`1 ${data.sendCurrency?.code} = ${data.exchangeRate?.toFixed(4)} ${data.receiveCurrency?.code}`} />
+                        <SummaryRow label="Base Fee:" value={`£${data.fee?.toFixed(2)}`} />
+
+                        <hr className="win-sep-h" />
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                padding: '4px 0',
+                                fontWeight: 'bold',
+                                fontSize: '12px',
+                                borderTop: '2px solid #000000',
+                                marginTop: '2px',
+                            }}
                         >
-                            Continue to Payment
-                        </button>
-                    </div>
-                </div>
-
-                <div className="lg:col-span-5 space-y-6">
-                    <div className="bg-primary rounded-[2.5rem] p-8 shadow-xl shadow-primary/5 border border-slate-100 space-y-8 sticky top-24">
-                        <h3 className="text-2xl font-bold text-white font-headline">Transfer Summary</h3>
-
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <span className="text-xs font-bold text-on-surface-variant text-white/50 uppercase tracking-wider">You Send</span>
-                                    <div className="text-2xl font-bold text-white">{data.sendAmount?.toLocaleString()} {data.sendCurrency?.code}</div>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
-                                    <ArrowRight size={20} className="-rotate-45" />
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <span className="text-xs font-bold text-on-surface-variant text-white/50 uppercase tracking-wider">Recipient Receives</span>
-                                    <div className="text-2xl font-bold text-emerald-500">{recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} {data.receiveCurrency?.code}</div>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
-                                    <ArrowRight size={20} className="rotate-45" />
-                                </div>
-                            </div>
+                            <span>Total:</span>
+                            <span style={{ color: '#0a246a' }}>£{totalToPay.toLocaleString()}</span>
                         </div>
 
-                        <div className="h-px bg-slate-100 w-full"></div>
-
-                        <div className="space-y-4">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-white/50">Exchange Rate</span>
-                                <span className="font-bold text-white">1 {data.sendCurrency?.code} = {data.exchangeRate?.toFixed(4)} {data.receiveCurrency?.code}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-white/50">Transfer Fee</span>
-                                <span className="font-bold text-white">£{data.fee?.toFixed(2)}</span>
-                            </div>
-                            <div className="flex justify-between text-lg pt-2">
-                                <span className="font-bold text-white">Total to Pay</span>
-                                <span className="font-black text-white">£{totalToPay.toLocaleString()}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-secondary/5 border border-secondary/10 rounded-2xl p-6 flex gap-4 items-start">
-                        <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                            <ShieldCheck size={20} />
-                        </div>
-                        <div className="space-y-1">
-                            <h4 className="text-sm font-bold text-secondary">Institutional Security</h4>
-                            <p className="text-xs text-on-surface-variant leading-relaxed">Fully regulated by the FCA. Your funds are protected in tiered accounts.</p>
+                        <div
+                            style={{
+                                marginTop: '8px',
+                                padding: '6px',
+                                backgroundColor: '#fffbe6',
+                                borderTop: '1px solid #808080',
+                                borderLeft: '1px solid #808080',
+                                borderRight: '1px solid #ffffff',
+                                borderBottom: '1px solid #ffffff',
+                                fontSize: '10px',
+                                lineHeight: '1.5',
+                            }}
+                            role="note"
+                        >
+                            FCA Regulated &bull; AES-256 Encrypted &bull; Funds protected in tiered accounts
                         </div>
                     </div>
                 </div>
-            </motion.div>
-
+            </div>
         </div>
-    )
+    );
+}
+
+function WizardStep({ num, label, done, active }: { num: number; label: string; done?: boolean; active?: boolean }) {
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}>
+            <div
+                style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    backgroundColor: done ? '#006400' : active ? '#0a246a' : '#d4d0c8',
+                    color: done || active ? '#ffffff' : '#808080',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    border: active ? '2px solid #000080' : '1px solid #808080',
+                    flexShrink: 0,
+                }}
+                aria-current={active ? 'step' : undefined}
+            >
+                {done ? '✓' : num}
+            </div>
+            <span style={{ fontWeight: active ? 'bold' : 'normal', color: active ? '#000000' : '#808080' }}>{label}</span>
+        </div>
+    );
+}
+
+function SummaryRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+    return (
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: '11px' }}>
+            <span style={{ color: '#555555' }}>{label}</span>
+            <span style={{ fontWeight: 'bold', color: highlight ? '#006400' : '#000000' }}>{value}</span>
+        </div>
+    );
 }

@@ -1,45 +1,12 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import {
-    ArrowUpRight,
-    Clock,
-    CheckCircle2,
-    AlertCircle,
-    Search,
-    Filter,
-    ArrowRight,
-} from 'lucide-react';
-
 import type { TransferRecord, TransferStatus } from '../../types';
-import { cn } from '../../lib/utils';
 import { storage } from '../../lib/storage';
 
-const StatusBadge = ({ status }: { status: TransferStatus }) => {
-    const styles: Record<TransferStatus, string> = {
-        Completed: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-        Processing: 'bg-amber-50 text-amber-700 border-amber-100',
-        Pending: 'bg-blue-50 text-blue-700 border-blue-100',
-        Failed: 'bg-rose-50 text-rose-700 border-rose-100',
-    };
-
-    const icons: Record<TransferStatus, React.ReactNode> = {
-        Completed: <CheckCircle2 size={14} />,
-        Processing: <Clock size={14} />,
-        Pending: <Clock size={14} />,
-        Failed: <AlertCircle size={14} />,
-    };
-
-    return (
-        <span
-            className={cn(
-                'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border',
-                styles[status]
-            )}
-        >
-            {icons[status]}
-            {status}
-        </span>
-    );
+const statusColors: Record<TransferStatus, { bg: string; color: string; border: string }> = {
+    Completed: { bg: '#d4ead4', color: '#006400', border: '#808080' },
+    Processing: { bg: '#fff3cd', color: '#856404', border: '#808080' },
+    Pending: { bg: '#cce5ff', color: '#004085', border: '#808080' },
+    Failed: { bg: '#f8d7da', color: '#721c24', border: '#808080' },
 };
 
 export default function TransferHistory() {
@@ -53,191 +20,203 @@ export default function TransferHistory() {
             setHistory(data || []);
             setLoading(false);
         }, 600);
-
         return () => clearTimeout(timer);
     }, []);
 
     const totalSent = history.reduce((acc, record) => acc + record.amount, 0);
-
     const filteredHistory = history.filter((record) =>
         record.recipient.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <div className="max-w-5xl mx-auto px-6 py-12">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
-                <div className="space-y-2">
-                    <h1 className="font-headline text-4xl font-bold text-primary">
-                        Transfer History
-                    </h1>
-                    <p className="text-on-surface-variant">
-                        Track and manage your global money movements.
-                    </p>
+        <div style={{
+            fontFamily: "'Tahoma', 'MS Sans Serif', 'Arial', sans-serif",
+            fontSize: '11px',
+            padding: '16px',
+            backgroundColor: '#008080',
+            minHeight: 'calc(100vh - 80px)',
+        }}>
+
+            {/* Window */}
+            <div className="win-window" style={{ maxWidth: '900px', margin: '0 auto' }}>
+                <div className="win-titlebar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                            <rect width="12" height="12" rx="1" fill="#3a6ea5" />
+                            <rect x="2" y="3" width="8" height="6" rx="0.5" fill="none" stroke="#ffffff" strokeWidth="1" />
+                            <line x1="2" y1="5" x2="10" y2="5" stroke="#ffffff" strokeWidth="0.8" />
+                        </svg>
+                        <span>Zephyr — Transfer History</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                        <button className="win-titlebar-btn" aria-label="Minimize">
+                            <svg width="6" height="6" viewBox="0 0 6 6"><rect y="4" width="6" height="2" fill="#000" /></svg>
+                        </button>
+                        <button className="win-titlebar-btn" aria-label="Maximize">
+                            <svg width="6" height="6" viewBox="0 0 6 6"><rect width="6" height="6" fill="none" stroke="#000" strokeWidth="1.5" /></svg>
+                        </button>
+                        <button className="win-titlebar-btn" aria-label="Close">
+                            <svg width="6" height="6" viewBox="0 0 6 6">
+                                <line x1="0" y1="0" x2="6" y2="6" stroke="#000" strokeWidth="1.5" />
+                                <line x1="6" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1.5" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="relative flex-1 md:w-64">
-                        <Search
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
-                            size={18}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Search recipient or ID..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"
-                        />
+                {/* Toolbar */}
+                <div className="win-toolbar">
+                    <span style={{ fontSize: '11px' }}>Find:</span>
+                    <input
+                        type="text"
+                        placeholder="Search recipient or ID..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="win-input"
+                        style={{ width: '200px', height: '20px', fontSize: '11px' }}
+                        aria-label="Search transfers"
+                    />
+                    <div className="win-toolbar-sep" aria-hidden="true" />
+                    <button className="win-btn" style={{ minWidth: 0, padding: '2px 8px' }}>Refresh</button>
+                    <button className="win-btn" style={{ minWidth: 0, padding: '2px 8px' }}>Print</button>
+                </div>
+
+                <div style={{ padding: '10px', backgroundColor: '#d4d0c8', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+
+                    {/* Stats row */}
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <StatPanel label="Total Sent (MTD)" value={`£${totalSent.toLocaleString()}`} />
+                        <StatPanel label="Success Rate" value="99.8%" />
+                        <StatPanel label="Avg. Speed" value="14h 20m" />
+                        <StatPanel label="Total Records" value={`${history.length}`} />
                     </div>
 
-                    <button className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-on-surface-variant">
-                        <Filter size={20} />
-                    </button>
-                </div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Main Table Section */}
-                <div className="flex-grow space-y-8">
-                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-slate-50/50 border-b border-slate-100">
-                                        <th className="px-8 py-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                            Recipient & ID
+                    {/* Table */}
+                    <div
+                        style={{
+                            borderTop: '1px solid #808080',
+                            borderLeft: '1px solid #808080',
+                            borderRight: '1px solid #ffffff',
+                            borderBottom: '1px solid #ffffff',
+                            boxShadow: 'inset 1px 1px 0 #404040',
+                            backgroundColor: '#ffffff',
+                            overflowX: 'auto',
+                        }}
+                        role="region"
+                        aria-label="Transfer history table"
+                    >
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                            <thead>
+                                <tr>
+                                    {['Recipient', 'Transfer ID', 'Date', 'Sent', 'Received', 'Status'].map((col) => (
+                                        <th
+                                            key={col}
+                                            style={{
+                                                padding: '3px 8px',
+                                                backgroundColor: '#0a246a',
+                                                color: '#ffffff',
+                                                textAlign: 'left',
+                                                fontWeight: 'bold',
+                                                fontSize: '11px',
+                                                borderRight: '1px solid #1a3680',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                            scope="col"
+                                        >
+                                            {col}
                                         </th>
-                                        <th className="px-8 py-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                            Date
-                                        </th>
-                                        <th className="px-8 py-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                            Amount Sent
-                                        </th>
-                                        <th className="px-8 py-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                            Amount Received
-                                        </th>
-                                        <th className="px-8 py-5 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                            Status
-                                        </th>
-                                        <th className="px-8 py-5 w-16"></th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#808080' }}>
+                                            Loading records...
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {loading ? (
-                                        <tr>
-                                            <td colSpan={6} className="px-8 py-20 text-center">
-                                                <div className="flex flex-col items-center gap-4">
-                                                    <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                                    <p className="text-on-surface-variant font-medium">
-                                                        Fetching secure records...
-                                                    </p>
-                                                </div>
+                                ) : filteredHistory.length > 0 ? (
+                                    filteredHistory.map((record, idx) => (
+                                        <tr
+                                            key={record.id}
+                                            style={{
+                                                backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f0eeea',
+                                                borderBottom: '1px solid #e8e4dc',
+                                            }}
+                                        >
+                                            <td style={{ padding: '4px 8px', fontWeight: 'bold' }}>{record.recipient}</td>
+                                            <td style={{ padding: '4px 8px', fontFamily: "'Courier New', monospace", fontSize: '10px', color: '#555555' }}>{record.id}</td>
+                                            <td style={{ padding: '4px 8px', color: '#555555', whiteSpace: 'nowrap' }}>
+                                                {new Date(record.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                            </td>
+                                            <td style={{ padding: '4px 8px', fontWeight: 'bold', color: '#0a246a' }}>
+                                                {record.amount.toLocaleString()} {record.currency}
+                                            </td>
+                                            <td style={{ padding: '4px 8px', fontWeight: 'bold', color: '#006400' }}>
+                                                {record.receiveAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })} {record.receiveCurrency}
+                                            </td>
+                                            <td style={{ padding: '4px 8px' }}>
+                                                <span
+                                                    style={{
+                                                        display: 'inline-block',
+                                                        padding: '1px 6px',
+                                                        fontSize: '10px',
+                                                        fontWeight: 'bold',
+                                                        backgroundColor: statusColors[record.status].bg,
+                                                        color: statusColors[record.status].color,
+                                                        border: `1px solid ${statusColors[record.status].border}`,
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    {record.status}
+                                                </span>
                                             </td>
                                         </tr>
-                                    ) : filteredHistory.length > 0 ? (
-                                        filteredHistory.map((record, idx) => (
-                                            <motion.tr
-                                                key={record.id}
-                                                initial={{ opacity: 0, y: 8 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: idx * 0.03 }}
-                                                className="group hover:bg-slate-50/70 transition-colors duration-200"
-                                            >
-                                                <td className="px-8 py-6">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary font-bold text-lg">
-                                                            {record.recipient.charAt(0).toUpperCase()}
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-semibold text-primary">{record.recipient}</div>
-                                                            <div className="text-xs text-on-surface-variant font-mono tracking-tight">
-                                                                {record.id}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-6 text-sm text-on-surface-variant">
-                                                    {new Date(record.date).toLocaleDateString('en-GB', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                    })}
-                                                </td>
-                                                <td className="px-8 py-6 font-headline font-bold text-primary">
-                                                    {record.amount.toLocaleString()} {record.currency}
-                                                </td>
-                                                <td className="px-8 py-6">
-                                                    <div className="font-semibold text-secondary">
-                                                        {record.receiveAmount.toLocaleString()} {record.receiveCurrency}
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-6">
-                                                    <StatusBadge status={record.status} />
-                                                </td>
-                                                <td className="px-8 py-6 text-right">
-                                                    <button className="p-2 rounded-full hover:bg-white hover:shadow transition-all text-on-surface-variant opacity-0 group-hover:opacity-100">
-                                                        <ArrowRight size={18} />
-                                                    </button>
-                                                </td>
-                                            </motion.tr>
-                                        ))
-                                    ) : null}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Empty State */}
-                        {!loading && filteredHistory.length === 0 && (
-                            <div className="py-20 text-center space-y-4">
-                                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
-                                    <Search size={32} className="text-slate-300" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-primary text-lg">No transfers found</p>
-                                    <p className="text-sm text-on-surface-variant mt-1">
-                                        Try searching for a different name or ID.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                        <div className="bg-primary text-white p-8 rounded-[2rem] space-y-4">
-                            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                                <ArrowUpRight className="text-white" size={24} />
-                            </div>
-                            <div>
-                                <p className="text-white/70 text-sm font-bold uppercase tracking-widest">Total Sent (MTD)</p>
-                                <p className="text-4xl font-headline font-bold mt-2"> £{totalSent}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white border border-slate-100 p-8 rounded-[2rem] space-y-4 shadow-sm">
-                            <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
-                                <CheckCircle2 className="text-secondary" size={24} />
-                            </div>
-                            <div>
-                                <p className="text-on-surface-variant text-sm font-bold uppercase tracking-widest">Success Rate</p>
-                                <p className="text-4xl font-headline font-bold text-primary mt-2">99.8%</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white border border-slate-100 p-8 rounded-[2rem] space-y-4 shadow-sm">
-                            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                                <Clock className="text-amber-600" size={24} />
-                            </div>
-                            <div>
-                                <p className="text-on-surface-variant text-sm font-bold uppercase tracking-widest">Avg. Speed</p>
-                                <p className="text-4xl font-headline font-bold text-primary mt-2">14h 20m</p>
-                            </div>
-                        </div>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#808080' }}>
+                                            No transfers found. {searchTerm && 'Try a different search term.'}
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                {/* Status bar */}
+                <div className="win-statusbar">
+                    <div className="win-statusbar-panel" style={{ flex: 1 }}>
+                        {loading ? 'Loading...' : `${filteredHistory.length} object(s)`}
+                    </div>
+                    <div className="win-statusbar-panel">Total: £{totalSent.toLocaleString()}</div>
+                    <div className="win-statusbar-panel">FCA Regulated</div>
+                </div>
             </div>
+        </div>
+    );
+}
+
+function StatPanel({ label, value }: { label: string; value: string }) {
+    return (
+        <div
+            style={{
+                flex: 1,
+                borderTop: '1px solid #808080',
+                borderLeft: '1px solid #808080',
+                borderRight: '1px solid #ffffff',
+                borderBottom: '1px solid #ffffff',
+                boxShadow: 'inset 1px 1px 0 #404040',
+                backgroundColor: '#ffffff',
+                padding: '8px 10px',
+                textAlign: 'center',
+                fontSize: '11px',
+            }}
+        >
+            <div style={{ color: '#555555', marginBottom: '2px' }}>{label}</div>
+            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0a246a', fontFamily: "'Courier New', monospace" }}>{value}</div>
         </div>
     );
 }

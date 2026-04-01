@@ -1,17 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import {
-    CheckCircle2,
-    Download,
-    Share2,
-    ArrowRight,
-    Star,
-    ExternalLink,
-    Copy,
-    Check
-} from 'lucide-react';
 import type { TransferData } from '../../../../types';
-import { cn } from '../../../../lib/utils';
 
 interface SuccessScreenProps {
     onReset: () => void;
@@ -23,7 +11,12 @@ export function SuccessScreen({ onReset, data }: SuccessScreenProps) {
     const [rating, setRating] = React.useState(0);
     const [isDownloading, setIsDownloading] = React.useState(false);
 
-    const transferId = `SL-${Math.random().toString(36).substr(2, 4).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+    const transferId = React.useMemo(
+        () => `SL-${Math.floor(1000 + Math.random() * 9000)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+        []
+    );
+
+    const recipientReceives = (Number(data.sendAmount || 0) - Number(data.fee || 0)) * Number(data.exchangeRate || 1);
 
     const handleCopyId = () => {
         navigator.clipboard.writeText(transferId);
@@ -33,191 +26,203 @@ export function SuccessScreen({ onReset, data }: SuccessScreenProps) {
 
     const handleDownloadReceipt = () => {
         setIsDownloading(true);
-
-        // Simulate PDF generation
-        const receiptContent = `
-      SOVEREIGN LEDGER - TRANSFER RECEIPT
-      ----------------------------------
-      Transfer ID: ${transferId}
-      Date: ${new Date().toLocaleString()}
-      
-      SENDER DETAILS:
-      Amount Sent: ${data.sendAmount} ${data.sendCurrency?.code}
-      Fee: ${data.fee} ${data.sendCurrency?.code}
-      
-      RECIPIENT DETAILS:
-      Name: ${data.recipientName}
-      Bank: ${data.bankName}
-      Account: ****${data.accountNumber?.slice(-4)}
-      
-      CONVERSION:
-      Exchange Rate: 1 ${data.sendCurrency?.code} = ${data.exchangeRate} ${data.receiveCurrency?.code}
-      Amount Received: ${(Number(data.sendAmount) * Number(data.exchangeRate)).toFixed(2)} ${data.receiveCurrency?.code}
-      
-      STATUS: Initiated
-      ----------------------------------
-      Thank you for choosing Sovereign Ledger.
-    `;
-
+        const receiptContent = `ZEPHYR - TRANSFER RECEIPT\n----------------------------------\nTransfer ID: ${transferId}\nDate: ${new Date().toLocaleString()}\n\nSENDER DETAILS:\nAmount Sent: ${data.sendAmount} ${data.sendCurrency?.code}\nFee: ${data.fee} ${data.sendCurrency?.code}\n\nRECIPIENT DETAILS:\nName: ${data.recipientName}\nBank: ${data.bankName}\nAccount: ****${data.accountNumber?.slice(-4)}\n\nCONVERSION:\nExchange Rate: 1 ${data.sendCurrency?.code} = ${data.exchangeRate} ${data.receiveCurrency?.code}\nAmount Received: ${recipientReceives.toFixed(2)} ${data.receiveCurrency?.code}\n\nSTATUS: Initiated\n----------------------------------\nThank you for choosing Zephyr.`;
         const blob = new Blob([receiptContent], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Sovereign_Ledger_Receipt_${transferId}.txt`;
+        link.download = `Zephyr_Receipt_${transferId}.txt`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-
         setTimeout(() => setIsDownloading(false), 1500);
     };
 
-    const handleShare = async () => {
-        const shareData = {
-            title: 'Sovereign Ledger Transfer',
-            text: `I just sent ${data.sendAmount} ${data.sendCurrency?.code} to ${data.recipientName} via Sovereign Ledger. Transfer ID: ${transferId}`,
-            url: window.location.href
-        };
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                handleCopyId();
-                alert('Transfer details copied to clipboard!');
-            }
-        } catch (err) {
-            console.error('Error sharing:', err);
-        }
-    };
-
-    const recipientReceives = (Number(data.sendAmount || 0) - Number(data.fee || 0)) * Number(data.exchangeRate || 1);
-
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-3xl mx-auto text-center space-y-12 py-12"
-        >
-            <div className="space-y-6">
-                <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', damping: 12, stiffness: 200, delay: 0.2 }}
-                    className="w-24 h-24 rounded-full bg-secondary text-white flex items-center justify-center mx-auto shadow-2xl shadow-secondary/20"
-                >
-                    <CheckCircle2 size={48} />
-                </motion.div>
-                <div className="space-y-2">
-                    <h2 className="text-5xl font-black text-primary font-headline">Transfer Initiated</h2>
-                    <p className="text-xl text-on-surface-variant font-medium">Your {data.sendCurrency?.code} {data.sendAmount?.toLocaleString()} is on its way to {data.recipientName}.</p>
+        <div style={{
+            fontFamily: "'Tahoma', 'MS Sans Serif', 'Arial', sans-serif",
+            fontSize: '11px',
+            maxWidth: '560px',
+            margin: '0 auto',
+        }}>
+
+            {/* Success message box — like a Windows info dialog */}
+            <div className="win-window" style={{ marginBottom: '10px' }}>
+                <div className="win-titlebar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                            <circle cx="6" cy="6" r="6" fill="#006400" />
+                            <polyline points="2.5,6 5,8.5 9.5,3.5" stroke="#ffffff" strokeWidth="1.5" fill="none" />
+                        </svg>
+                        <span>Transfer Initiated Successfully</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                        <button className="win-titlebar-btn" aria-label="Close" onClick={onReset}>
+                            <svg width="6" height="6" viewBox="0 0 6 6">
+                                <line x1="0" y1="0" x2="6" y2="6" stroke="#000" strokeWidth="1.5" />
+                                <line x1="6" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Success message body */}
+                <div style={{ padding: '16px', backgroundColor: '#d4d0c8', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                    {/* Big checkmark icon */}
+                    <div style={{ flexShrink: 0 }}>
+                        <svg width="48" height="48" viewBox="0 0 48 48" aria-label="Success" role="img">
+                            <circle cx="24" cy="24" r="22" fill="#006400" stroke="#004800" strokeWidth="1.5" />
+                            <polyline points="10,24 19,33 38,14" stroke="#ffffff" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '6px' }}>
+                            Transfer Initiated
+                        </div>
+                        <p style={{ fontSize: '11px', lineHeight: '1.6', margin: 0 }}>
+                            Your {data.sendCurrency?.code} {data.sendAmount?.toLocaleString()} is on its way to <strong>{data.recipientName}</strong>.
+                            Estimated arrival: <strong>Tomorrow, 14:00 GMT</strong>.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-primary/5 border border-slate-100 space-y-8 text-left relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-[5rem] -mr-8 -mt-8"></div>
+            {/* Transfer ID + details */}
+            <div className="win-window" style={{ marginBottom: '10px' }}>
+                <div className="win-titlebar" style={{ padding: '2px 6px' }}>
+                    <span>Transfer Receipt — {transferId}</span>
+                </div>
+                <div style={{ padding: '10px', backgroundColor: '#d4d0c8', display: 'flex', flexDirection: 'column', gap: '8px' }}>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
-                    <div className="space-y-6">
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Transfer ID</span>
-                            <div className="flex items-center gap-2 group cursor-pointer" onClick={handleCopyId}>
-                                <div className="text-lg font-bold text-primary">{transferId}</div>
-                                {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-slate-300 group-hover:text-primary transition-colors" />}
+                    {/* Transfer ID row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontWeight: 'bold', minWidth: '100px' }}>Transfer ID:</span>
+                        <div
+                            style={{
+                                flex: 1,
+                                fontFamily: "'Courier New', monospace",
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                padding: '2px 6px',
+                                borderTop: '1px solid #808080',
+                                borderLeft: '1px solid #808080',
+                                borderRight: '1px solid #ffffff',
+                                borderBottom: '1px solid #ffffff',
+                                backgroundColor: '#ffffff',
+                                letterSpacing: '1px',
+                            }}
+                        >
+                            {transferId}
+                        </div>
+                        <button
+                            className="win-btn"
+                            onClick={handleCopyId}
+                            style={{ minWidth: 0, padding: '2px 8px', fontSize: '11px' }}
+                            title="Copy transfer ID"
+                        >
+                            {copied ? 'Copied!' : 'Copy'}
+                        </button>
+                    </div>
+
+                    {/* Details table */}
+                    <div
+                        style={{
+                            borderTop: '1px solid #808080',
+                            borderLeft: '1px solid #808080',
+                            borderRight: '1px solid #ffffff',
+                            borderBottom: '1px solid #ffffff',
+                            boxShadow: 'inset 1px 1px 0 #404040',
+                            backgroundColor: '#ffffff',
+                        }}
+                    >
+                        {[
+                            { label: 'Amount Sent', value: `${data.sendAmount?.toLocaleString()} ${data.sendCurrency?.code}` },
+                            { label: 'Recipient Receives', value: `${recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${data.receiveCurrency?.code}`, highlight: true },
+                            { label: 'Recipient Name', value: data.recipientName || '' },
+                            { label: 'Payment Method', value: data.paymentMethod || '' },
+                            { label: 'Estimated Arrival', value: 'Tomorrow, 14:00 GMT', bold: true },
+                        ].map((row, i) => (
+                            <div
+                                key={row.label}
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    padding: '4px 8px',
+                                    borderBottom: i < 4 ? '1px solid #e8e4dc' : undefined,
+                                    backgroundColor: i % 2 === 0 ? '#ffffff' : '#f8f6f2',
+                                    fontSize: '11px',
+                                }}
+                            >
+                                <span style={{ color: '#555555' }}>{row.label}</span>
+                                <span style={{
+                                    fontWeight: row.bold || row.highlight ? 'bold' : 'normal',
+                                    color: row.highlight ? '#006400' : '#000000',
+                                }}>
+                                    {row.value}
+                                </span>
                             </div>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Recipient Name</span>
-                            <div className="text-lg font-bold text-primary">{data.recipientName}</div>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Estimated Arrival</span>
-                            <div className="text-lg font-bold text-secondary">Tomorrow, 14:00 GMT</div>
-                        </div>
+                        ))}
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Amount Sent</span>
-                            <div className="text-lg font-bold text-primary">{data.sendAmount?.toLocaleString()} {data.sendCurrency?.code}</div>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Recipient Receives</span>
-                            <div className="text-lg font-bold text-secondary">{recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} {data.receiveCurrency?.code}</div>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Payment Method</span>
-                            <div className="text-lg font-bold text-primary">{data.paymentMethod}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="h-px bg-slate-100 w-full"></div>
-
-                <div className="flex flex-wrap gap-4">
-                    <button
-                        onClick={handleDownloadReceipt}
-                        disabled={isDownloading}
-                        className={cn(
-                            "flex-1 bg-surface-container-high text-primary px-6 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 transition-all",
-                            isDownloading && "opacity-50 cursor-not-allowed"
-                        )}
-                    >
-                        <Download size={20} className={isDownloading ? "animate-bounce" : ""} />
-                        {isDownloading ? "Generating..." : "Download Receipt"}
-                    </button>
-                    <button
-                        onClick={handleShare}
-                        className="flex-1 bg-surface-container-high text-primary px-6 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 transition-all"
-                    >
-                        <Share2 size={20} />
-                        Share Details
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-primary text-white p-8 rounded-[2.5rem] text-left space-y-4 flex flex-col justify-between group cursor-pointer hover:scale-[1.02] transition-all">
-                    <div className="space-y-2">
-                        <h3 className="text-2xl font-bold font-headline">Track your transfer</h3>
-                        <p className="text-white/70 text-sm">Get real-time updates on your funds movement.</p>
-                    </div>
-                    <div className="flex items-center gap-2 font-bold group-hover:gap-4 transition-all">
-                        Open Tracker <ArrowRight size={20} />
-                    </div>
-                </div>
-
-                <div className="bg-white border border-slate-100 p-8 rounded-[2.5rem] text-left space-y-4 flex flex-col justify-between group cursor-pointer hover:scale-[1.02] transition-all">
-                    <div className="space-y-2">
-                        <div className="flex gap-1 text-secondary">
+                    {/* Rating */}
+                    <fieldset className="win-groupbox">
+                        <legend className="win-groupbox-label">Rate Your Experience</legend>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 0' }}>
                             {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
+                                <button
                                     key={star}
-                                    size={16}
-                                    fill={star <= rating ? "currentColor" : "none"}
-                                    className={cn(star <= rating ? "text-secondary" : "text-slate-200")}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setRating(star);
+                                    onClick={() => setRating(star)}
+                                    style={{
+                                        width: '22px',
+                                        height: '22px',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        fontSize: '18px',
+                                        lineHeight: 1,
+                                        color: star <= rating ? '#ffd700' : '#c8c4bc',
                                     }}
-                                />
+                                    title={`${star} star${star !== 1 ? 's' : ''}`}
+                                    aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+                                >
+                                    &#9733;
+                                </button>
                             ))}
+                            {rating > 0 && (
+                                <span style={{ fontSize: '11px', color: '#555555', marginLeft: '6px' }}>
+                                    {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating]}
+                                </span>
+                            )}
                         </div>
-                        <h3 className="text-2xl font-bold font-headline text-primary">Rate your experience</h3>
-                        <p className="text-on-surface-variant text-sm">Help us improve the gold standard in money movement.</p>
-                    </div>
-                    <div className="flex items-center gap-2 font-bold text-primary group-hover:gap-4 transition-all">
-                        Leave a Review <ExternalLink size={20} />
+                    </fieldset>
+
+                    <hr className="win-sep-h" />
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                        <button
+                            onClick={handleDownloadReceipt}
+                            disabled={isDownloading}
+                            className="win-btn"
+                            style={{ minWidth: '130px' }}
+                        >
+                            {isDownloading ? 'Saving...' : 'Save Receipt...'}
+                        </button>
+                        <button
+                            onClick={onReset}
+                            className="win-btn win-btn-primary"
+                            style={{ minWidth: '130px', fontWeight: 'bold' }}
+                        >
+                            New Transfer
+                        </button>
+                        <button onClick={onReset} className="win-btn">
+                            Close
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <button
-                onClick={onReset}
-                className="text-primary font-bold hover:underline py-4"
-            >
-                Make another transfer
-            </button>
-        </motion.div>
+        </div>
     );
 }

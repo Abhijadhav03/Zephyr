@@ -1,149 +1,456 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
 
-
-/* :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-} */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* ── Windows 2000 System Font Stack ── */
+@layer base {
+  * {
+    box-sizing: border-box;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  body {
+    font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+    font-size: 11px;
+    background-color: #008080;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+    font-size: 11px;
+    border: 2px inset #ffffff;
+    background: #ffffff;
+    color: #000000;
+    padding: 2px 4px;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    outline: 1px dotted #000000;
+    outline-offset: -2px;
   }
 }
 
+@theme {
+  --font-headline: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  --font-body: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  --font-sans: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  --font-mono: 'Courier New', monospace;
+
+  /* Windows 2000 Classic Silver Palette */
+  --color-win-silver: #d4d0c8;
+  --color-win-silver-dark: #a0998c;
+  --color-win-silver-light: #e8e4dc;
+  --color-win-white: #ffffff;
+  --color-win-black: #000000;
+
+  /* Title bar / active window */
+  --color-win-titlebar-from: #0a246a;
+  --color-win-titlebar-to: #3a6ea5;
+  --color-win-titlebar-text: #ffffff;
+
+  /* Inactive title bar */
+  --color-win-titlebar-inactive-from: #7f9db9;
+  --color-win-titlebar-inactive-to: #c1d7ec;
+
+  /* Classic 3D border colors */
+  --color-win-highlight: #ffffff;
+  --color-win-shadow: #808080;
+  --color-win-dark-shadow: #404040;
+  --color-win-button-face: #d4d0c8;
+
+  /* Desktop teal */
+  --color-win-desktop: #008080;
+
+  /* Selected item */
+  --color-win-selected: #0a246a;
+  --color-win-selected-text: #ffffff;
+
+  /* Link blue */
+  --color-win-link: #0000ff;
+  --color-win-link-visited: #800080;
+
+  /* Semantic tokens mapped to Win2k */
+  --color-primary: #0a246a;
+  --color-primary-container: #3a6ea5;
+  --color-secondary: #006400;
+  --color-surface: #d4d0c8;
+  --color-surface-container: #c8c4bc;
+  --color-surface-container-low: #d4d0c8;
+  --color-surface-container-high: #bfbbb3;
+  --color-surface-container-highest: #b8b4ac;
+  --color-on-surface: #000000;
+  --color-on-surface-variant: #333333;
+  --color-outline-variant: #808080;
+}
+
+/* ── Win2k 3D Button Effect ── */
+.win-btn {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: inset 1px 1px 0 #e8e4dc, inset -1px -1px 0 #404040;
+  cursor: pointer;
+  font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  font-size: 11px;
+  padding: 3px 12px 4px;
+  min-width: 75px;
+  color: #000000;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.win-btn:hover {
+  background-color: #d9d5cd;
+}
+
+.win-btn:active,
+.win-btn-pressed {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #e8e4dc;
+  padding: 4px 11px 3px 13px;
+}
+
+.win-btn-primary {
+  background-color: #d4d0c8;
+  border: 2px solid #000000;
+  border-top-color: #ffffff;
+  border-left-color: #ffffff;
+  box-shadow: inset 1px 1px 0 #e8e4dc, inset -1px -1px 0 #404040, 0 0 0 1px #000000;
+}
+
+.win-btn:disabled {
+  color: #808080;
+  text-shadow: 1px 1px 0 #ffffff;
+  cursor: default;
+}
+
+/* ── Win2k Window / Dialog Panel ── */
+.win-window {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-shadow: inset 1px 1px 0 #e8e4dc, inset -1px -1px 0 #808080, 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.win-titlebar {
+  background: linear-gradient(to right, #0a246a, #3a6ea5);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 3px 4px 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  user-select: none;
+}
+
+.win-titlebar-btn {
+  width: 16px;
+  height: 14px;
+  background-color: #d4d0c8;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px 0 #e8e4dc, inset -1px -1px 0 #404040;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  padding: 0;
+  line-height: 1;
+  font-family: 'Marlett', 'Wingdings', 'Tahoma', sans-serif;
+}
+
+.win-titlebar-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* ── Win2k Inset/Group Box ── */
+.win-inset {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  background: #ffffff;
+}
+
+.win-groupbox {
+  border: 1px solid #808080;
+  box-shadow: 1px 1px 0 #ffffff;
+  padding: 12px 8px 8px;
+  position: relative;
+  margin-top: 8px;
+}
+
+.win-groupbox-label {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background: #d4d0c8;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ── Win2k Menubar ── */
+.win-menubar {
+  background-color: #d4d0c8;
+  border-bottom: 1px solid #808080;
+  display: flex;
+  align-items: stretch;
+  padding: 0 2px;
+}
+
+.win-menu-item {
+  padding: 3px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  user-select: none;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.win-menu-item:hover,
+.win-menu-item-active {
+  background-color: #0a246a;
+  color: #ffffff;
+}
+
+/* ── Win2k Toolbar ── */
+.win-toolbar {
+  background-color: #d4d0c8;
+  border-bottom: 1px solid #808080;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  gap: 1px;
+}
+
+.win-toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: #808080;
+  box-shadow: 1px 0 0 #ffffff;
+  margin: 0 3px;
+}
+
+/* ── Win2k Status Bar ── */
+.win-statusbar {
+  background-color: #d4d0c8;
+  border-top: 1px solid #808080;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 11px;
+}
+
+.win-statusbar-panel {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+/* ── Win2k Scrollbar (decorative) ── */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #d4d0c8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0bdb5;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+
+::-webkit-scrollbar-button {
+  background: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Win2k Input ── */
+.win-input {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px 0 #404040;
+  background: #ffffff;
+  font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  color: #000000;
+  outline: none;
+  width: 100%;
+}
+
+.win-input:focus {
+  outline: none;
+}
+
+/* ── Win2k Select ── */
+.win-select {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  box-shadow: inset 1px 1px 0 #404040;
+  background: #ffffff;
+  font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  color: #000000;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Crect x='0' y='0' width='16' height='16' fill='%23d4d0c8'/%3E%3Crect x='0' y='0' width='15' height='1' fill='%23ffffff'/%3E%3Crect x='0' y='0' width='1' height='15' fill='%23ffffff'/%3E%3Crect x='15' y='0' width='1' height='16' fill='%23808080'/%3E%3Crect x='0' y='15' width='16' height='1' fill='%23808080'/%3E%3Cpolygon points='4,6 12,6 8,10' fill='%23000000'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 16px;
+  padding-right: 18px;
+}
+
+/* ── Win2k Taskbar ── */
+.win-taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  box-shadow: inset 0 1px 0 #e8e4dc;
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  gap: 2px;
+  padding: 2px 4px;
+}
+
+.win-start-btn {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: inset 1px 1px 0 #e8e4dc, inset -1px -1px 0 #404040;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 2px 8px 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-family: 'Tahoma', sans-serif;
+}
+
+/* ── Desktop background ── */
+.win-desktop {
+  background-color: #008080;
+  min-height: 100vh;
+  padding: 8px;
+  padding-bottom: 36px;
+}
+
+/* ── Utility overrides ── */
+.win-text-blue { color: #0a246a; }
+.win-text-green { color: #006400; }
+.win-text-red { color: #cc0000; }
+.win-text-gray { color: #808080; }
+.win-bg-silver { background-color: #d4d0c8; }
+.win-bg-white { background-color: #ffffff; }
+
+/* Selection highlight */
+::selection {
+  background-color: #0a246a;
+  color: #ffffff;
+}
+
+/* Separator line */
+.win-sep-h {
+  border: none;
+  border-top: 1px solid #808080;
+  box-shadow: 0 1px 0 #ffffff;
+  margin: 4px 0;
+}
+
+.win-sep-v {
+  border: none;
+  border-left: 1px solid #808080;
+  box-shadow: 1px 0 0 #ffffff;
+  height: 100%;
+}
+
+/* ── Win2k Tab strip ── */
+.win-tab {
+  background: #c8c4bc;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #ffffff;
+  border-bottom: none;
+  padding: 3px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  position: relative;
+  top: 1px;
+}
+
+.win-tab-active {
+  background: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: none;
+  z-index: 1;
+}
+
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  /* text-align: center; */
-  border-inline: 1px solid var(--border);
+  margin: 0;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  /* color: var(--text-h); */
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-
-@theme {
-  --font-headline: "Manrope", sans-serif;
-  --font-body: "Inter", sans-serif;
-
-  --color-primary: #000666;
-  --color-primary-container: #1a237e;
-  --color-secondary: #1b6d24;
-  --color-surface: #f7f9fc;
-  --color-surface-container: #eceef1;
-  --color-surface-container-low: #f2f4f7;
-  --color-surface-container-high: #e6e8eb;
-  --color-surface-container-highest: #e0e3e6;
-  --color-on-surface: #191c1e;
-  --color-on-surface-variant: #454652;
-  --color-outline-variant: #c6c5d4;
-}
-
-@layer base {
-  body {
-    @apply bg-surface font-body text-on-surface antialiased;
-  }
-}
-
-@layer components {
-  .glass-panel {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20;
-  }
 }

@@ -1,20 +1,17 @@
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { type Currency, SUPPORTED_CURRENCIES, type TransferData } from '../../../../types';
-import { Check, ChevronDown, Divide, Minus, RefreshCw, Search } from 'lucide-react';
+import { Check, RefreshCw, Search } from 'lucide-react';
 import { useExchangeRate } from '../../../../hooks/useExchangerate';
 import { cn } from '../../../../lib/utils';
-
 
 interface CalculatorProps {
     onNext: (data: Partial<TransferData>) => void;
     initialData?: Partial<TransferData>;
 }
 
-
 export function Calculator({ onNext, initialData }: CalculatorProps) {
     const [sendAmount, setSendAmount] = useState<number>(initialData?.sendAmount || 1000);
-    // const [sendCurrency, setSendCurrency] = useState<Currency>(SUPPORTED_CURRENCIES[0]);
     const [sendCurrency, setSendCurrency] = useState<Currency>(initialData?.sendCurrency || SUPPORTED_CURRENCIES[0]);
     const [receiveCurrency, setReceiveCurrency] = useState<Currency>(initialData?.receiveCurrency || SUPPORTED_CURRENCIES[1]);
 
@@ -22,90 +19,170 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
 
     const fee = sendCurrency.code === 'GBP' ? 2.50 : (sendCurrency.code === 'USD' ? 3.00 : 5.00);
     const recipientGets = (sendAmount - fee) * exchangeRate;
-    // const [receiveCurrency, setReceiveCurrency] = useState<Currency>(SUPPORTED_CURRENCIES[1]);
-    // console.log(sendAmount);
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-[2.5rem] p-8 shadow-2xl shadow-primary/5 border border-outline-variant/10 w-full max-w-lg"
-        >
-            <div className="space-y-6">
+        <div className="win-window" style={{ width: '100%', maxWidth: '480px', fontFamily: "'Tahoma', 'MS Sans Serif', 'Arial', sans-serif" }}>
+            {/* Title bar */}
+            <div className="win-titlebar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                        <rect width="12" height="12" rx="1" fill="#3a6ea5" />
+                        <text x="2" y="10" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">$</text>
+                    </svg>
+                    <span>Zephyr Transfer Calculator</span>
+                </div>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                    <button className="win-titlebar-btn" aria-label="Minimize">
+                        <svg width="6" height="6" viewBox="0 0 6 6"><rect y="4" width="6" height="2" fill="#000" /></svg>
+                    </button>
+                    <button className="win-titlebar-btn" aria-label="Maximize">
+                        <svg width="6" height="6" viewBox="0 0 6 6"><rect width="6" height="6" fill="none" stroke="#000" strokeWidth="1.5" /></svg>
+                    </button>
+                    <button className="win-titlebar-btn" aria-label="Close">
+                        <svg width="6" height="6" viewBox="0 0 6 6">
+                            <line x1="0" y1="0" x2="6" y2="6" stroke="#000" strokeWidth="1.5" />
+                            <line x1="6" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-                <div className="space-y-2">
+            {/* Body */}
+            <div style={{ padding: '12px', backgroundColor: '#d4d0c8' }}>
 
-                    <label className="block text-sm font-bold text-on-surface-variant px-1">You Send</label>
-                    <div className="bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between group focus-within:bg-white focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+                {/* You Send group */}
+                <fieldset className="win-groupbox" style={{ marginBottom: '10px' }}>
+                    <legend className="win-groupbox-label">You Send</legend>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                         <input
                             type="number"
                             value={sendAmount}
                             onChange={(e) => setSendAmount(Number(e.target.value))}
-                            className="bg-transparent border-none focus:ring-0 text-3xl font-headline font-bold text-primary w-full outline-none"
+                            className="win-input"
+                            style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: "'Courier New', monospace" }}
                             placeholder="0.00"
+                            aria-label="Amount to send"
                         />
                         <CurrencyDropdown
                             selected={sendCurrency}
                             onSelect={setSendCurrency}
                         />
                     </div>
+                </fieldset>
+
+                {/* Breakdown table */}
+                <div
+                    style={{
+                        borderTop: '1px solid #808080',
+                        borderLeft: '1px solid #808080',
+                        borderRight: '1px solid #ffffff',
+                        borderBottom: '1px solid #ffffff',
+                        boxShadow: 'inset 1px 1px 0 #404040',
+                        backgroundColor: '#ffffff',
+                        marginBottom: '10px',
+                        fontSize: '11px',
+                    }}
+                    role="table"
+                    aria-label="Transfer breakdown"
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            padding: '4px 8px',
+                            borderBottom: '1px solid #d4d0c8',
+                            backgroundColor: '#0a246a',
+                            color: '#ffffff',
+                        }}
+                        role="row"
+                    >
+                        <span role="columnheader">Description</span>
+                        <span role="columnheader">Amount</span>
+                    </div>
+                    <div
+                        style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 8px', borderBottom: '1px solid #e8e4dc' }}
+                        role="row"
+                    >
+                        <span role="cell">Transaction Fee</span>
+                        <span role="cell" style={{ fontWeight: 'bold', color: '#cc0000' }}>
+                            -{fee.toFixed(2)} {sendCurrency.code}
+                        </span>
+                    </div>
+                    <div
+                        style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 8px' }}
+                        role="row"
+                    >
+                        <span role="cell" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            Exchange Rate
+                            {isFetching && <RefreshCw size={10} className="animate-spin" style={{ color: '#808080' }} />}
+                        </span>
+                        <span role="cell" style={{ fontWeight: 'bold', color: '#006400' }}>
+                            {exchangeRate.toFixed(4)} {receiveCurrency.code}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Recipient Gets group */}
+                <fieldset className="win-groupbox" style={{ marginBottom: '12px' }}>
+                    <legend className="win-groupbox-label">Recipient Gets</legend>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <div
+                            className="win-input"
+                            style={{
+                                flex: 1,
+                                fontSize: '18px',
+                                fontWeight: 'bold',
+                                fontFamily: "'Courier New', monospace",
+                                color: '#006400',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minHeight: '28px',
+                            }}
+                            role="status"
+                            aria-live="polite"
+                            aria-label="Recipient amount"
+                        >
+                            {recipientGets.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        <CurrencyDropdown
+                            selected={receiveCurrency}
+                            onSelect={setReceiveCurrency}
+                        />
+                    </div>
+                </fieldset>
+
+                {/* Separator */}
+                <hr className="win-sep-h" />
+
+                {/* Dialog buttons */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px', marginTop: '10px' }}>
+                    <button
+                        onClick={() => onNext({ sendAmount, sendCurrency, receiveCurrency, exchangeRate, fee })}
+                        className="win-btn win-btn-primary"
+                        style={{ minWidth: '120px', fontSize: '11px', fontWeight: 'bold' }}
+                    >
+                        Send Money &gt;&gt;
+                    </button>
+                    <button className="win-btn" style={{ minWidth: '75px' }}>
+                        Cancel
+                    </button>
+                    <button className="win-btn" style={{ minWidth: '55px' }}>
+                        Help
+                    </button>
                 </div>
             </div>
 
-
-            <div className="relative px-4 py-2">
-                <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/30 to-primary/10"></div>
-                <div className="space-y-4 relative z-10">
-                    <div className="flex items-center gap-6">
-                        <div className="w-8 h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                            <Minus size={14} />
-                        </div>
-                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-4 py-3 rounded-2xl flex justify-between items-center text-sm">
-                            <span className="text-on-surface-variant">Transaction Fee</span>
-                            <span className="font-bold text-primary">{fee.toFixed(2)} {sendCurrency.code}</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                        <div className="w-8 h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                            <Divide size={14} />
-                        </div>
-                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-4 py-3 rounded-2xl flex justify-between items-center text-sm">
-                            <span className="text-on-surface-variant">Exchange Rate</span>
-                            <div className="flex items-center gap-2">
-                                {isFetching && <RefreshCw size={12} className="animate-spin text-primary/40" />}
-                                <span className="font-bold text-secondary">{exchangeRate.toFixed(4)} {receiveCurrency.code}</span>
-                            </div>
-                        </div>
-                    </div>
+            {/* Status bar */}
+            <div className="win-statusbar">
+                <div className="win-statusbar-panel" style={{ flex: 1 }}>
+                    Ready — Enter amount and select currencies to calculate transfer
                 </div>
             </div>
-            <div className="space-y-2">
-
-                <label className="block text-sm font-bold text-on-surface-variant px-1">Recipient Gets</label>
-                <div className="bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between">
-                    <div className="text-3xl font-headline font-bold text-primary">
-                        {recipientGets.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <CurrencyDropdown
-                        selected={receiveCurrency}
-                        onSelect={setReceiveCurrency}
-                    />
-                </div>
-            </div>
-
-            <button
-                onClick={() => onNext({ sendAmount, sendCurrency, receiveCurrency, exchangeRate, fee })}
-                className="w-full mt-4 bg-gradient-to-r from-primary to-primary-container text-white py-5 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
-            >
-                Send Money Now
-            </button>
-
-        </motion.div>
-    )
+        </div>
+    );
 }
 
-
-function CurrencyDropdown({ selected, onSelect }: { selected: Currency, onSelect: (c: Currency) => void }) {
+function CurrencyDropdown({ selected, onSelect }: { selected: Currency; onSelect: (c: Currency) => void }) {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
 
@@ -116,68 +193,129 @@ function CurrencyDropdown({ selected, onSelect }: { selected: Currency, onSelect
     );
 
     return (
-        <div className="relative">
-            <div
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+            <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm cursor-pointer hover:bg-slate-50 transition-colors border border-slate-100"
+                className="win-btn"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 6px', minWidth: '80px', fontSize: '11px' }}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
             >
                 <img
                     src={selected.flag}
                     alt={selected.code}
-                    className="w-6 h-6 rounded-full object-cover"
+                    style={{ width: '16px', height: '16px', objectFit: 'cover', imageRendering: 'pixelated' }}
                     referrerPolicy="no-referrer"
                 />
-                <span className="font-bold font-headline text-primary">{selected.code}</span>
-                <ChevronDown size={16} className={cn("text-primary/40 transition-transform", isOpen && "rotate-180")} />
-            </div>
+                <span style={{ fontWeight: 'bold' }}>{selected.code}</span>
+                <svg width="8" height="5" viewBox="0 0 8 5" aria-hidden="true">
+                    <polygon points="0,0 8,0 4,5" fill="#000000" />
+                </svg>
+            </button>
 
             <AnimatePresence>
                 {isOpen && (
                     <>
-                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                        <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setIsOpen(false)} />
                         <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute right-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 z-50 overflow-hidden"
+                            initial={{ opacity: 0, y: 2 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 2 }}
+                            transition={{ duration: 0.1 }}
+                            className="win-window"
+                            style={{
+                                position: 'absolute',
+                                right: 0,
+                                top: '100%',
+                                marginTop: '2px',
+                                width: '240px',
+                                zIndex: 50,
+                            }}
+                            role="listbox"
                         >
-                            <div className="p-4 border-bottom border-slate-50 bg-slate-50/50">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                            <div className="win-titlebar" style={{ padding: '2px 4px' }}>
+                                <span style={{ fontSize: '10px' }}>Select Currency</span>
+                                <button
+                                    className="win-titlebar-btn"
+                                    onClick={() => setIsOpen(false)}
+                                    aria-label="Close currency picker"
+                                >
+                                    <svg width="6" height="6" viewBox="0 0 6 6">
+                                        <line x1="0" y1="0" x2="6" y2="6" stroke="#000" strokeWidth="1.5" />
+                                        <line x1="6" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1.5" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div style={{ padding: '4px', backgroundColor: '#d4d0c8' }}>
+                                {/* Search */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                                    <Search size={11} style={{ color: '#808080', flexShrink: 0 }} aria-hidden="true" />
                                     <input
                                         autoFocus
                                         type="text"
-                                        placeholder="Search country or currency..."
+                                        placeholder="Find..."
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        className="w-full bg-white border-none rounded-xl py-2 pl-9 pr-4 text-sm focus:ring-2 focus:ring-primary/10 outline-none"
+                                        className="win-input"
+                                        style={{ flex: 1, height: '20px', fontSize: '11px' }}
+                                        aria-label="Search currencies"
                                     />
                                 </div>
-                            </div>
-                            <div className="max-h-64 overflow-y-auto p-2">
-                                {filtered.map((c) => (
-                                    <button
-                                        key={c.code}
-                                        onClick={() => {
-                                            onSelect(c);
-                                            setIsOpen(false);
-                                            setSearch('');
-                                        }}
-                                        className={cn(
-                                            "w-full flex items-center justify-between p-3 rounded-2xl transition-all hover:bg-slate-50 group",
-                                            selected.code === c.code && "bg-primary/5"
-                                        )}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <img src={c.flag} alt={c.code} className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
-                                            <div className="text-left">
-                                                <div className="text-sm font-bold text-primary">{c.code}</div>
-                                                <div className="text-[10px] text-on-surface-variant font-medium">{c.country}</div>
+
+                                {/* List */}
+                                <div
+                                    style={{
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        borderTop: '1px solid #808080',
+                                        borderLeft: '1px solid #808080',
+                                        borderRight: '1px solid #ffffff',
+                                        borderBottom: '1px solid #ffffff',
+                                        boxShadow: 'inset 1px 1px 0 #404040',
+                                        backgroundColor: '#ffffff',
+                                    }}
+                                >
+                                    {filtered.map((c, i) => (
+                                        <button
+                                            key={c.code}
+                                            role="option"
+                                            aria-selected={selected.code === c.code}
+                                            onClick={() => {
+                                                onSelect(c);
+                                                setIsOpen(false);
+                                                setSearch('');
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                padding: '3px 6px',
+                                                fontSize: '11px',
+                                                fontFamily: "'Tahoma', 'MS Sans Serif', 'Arial', sans-serif",
+                                                border: 'none',
+                                                backgroundColor: selected.code === c.code ? '#0a246a' : (i % 2 === 0 ? '#ffffff' : '#f0eeea'),
+                                                color: selected.code === c.code ? '#ffffff' : '#000000',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                            }}
+                                            className={cn(!selected.code.includes(c.code) && "hover:bg-blue-700 hover:text-white")}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <img
+                                                    src={c.flag}
+                                                    alt={c.code}
+                                                    style={{ width: '16px', height: '16px', objectFit: 'cover' }}
+                                                    referrerPolicy="no-referrer"
+                                                />
+                                                <span style={{ fontWeight: 'bold' }}>{c.code}</span>
+                                                <span style={{ fontSize: '10px', opacity: 0.8 }}>{c.country}</span>
                                             </div>
-                                        </div>
-                                        {selected.code === c.code && <Check size={16} className="text-primary" />}
-                                    </button>
-                                ))}
+                                            {selected.code === c.code && <Check size={11} />}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </motion.div>
                     </>
@@ -186,40 +324,3 @@ function CurrencyDropdown({ selected, onSelect }: { selected: Currency, onSelect
         </div>
     );
 }
-// function CurrencyDropdown({ selected, onSelect, label }: { selected: Currency, onSelect: (c: Currency) => void, label: string }) {
-//     const [isOpen, setIsOpen] = useState(false);
-//     return (
-//         <div className="relative">
-//             <label className="block text-sm font-bold text-on-surface-variant px-1">{label}</label>
-//             <button
-//                 onClick={() => setIsOpen(!isOpen)}
-//                 className="w-full bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between focus:ring-1 focus:ring-primary/20 transition-all"
-//             >
-//                 <div className="flex items-center gap-3">
-//                     <img src={selected.flag} alt={selected.code} className="w-8 h-8 rounded-full" />
-//                     <span className="text-lg font-bold text-primary">{selected.code}</span>
-//                 </div>
-//                 <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-//                 </svg>
-//             </button>
-//             {isOpen && (
-//                 <div className="absolute top-full left-0 right-0 bg-white rounded-2xl shadow-xl mt-2">
-//                     {SUPPORTED_CURRENCIES.map((currency) => (
-//                         <button
-//                             key={currency.code}
-//                             onClick={() => {
-//                                 onSelect(currency);
-//                                 setIsOpen(false);
-//                             }}
-//                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 transition-colors"
-//                         >
-//                             <img src={currency.flag} alt={currency.code} className="w-8 h-8 rounded-full" />
-//                             <span className="text-lg font-bold text-primary">{currency.code}</span>
-//                         </button>
-//                     ))}
-//                 </div>
-//             )}
-//         </div>
-//     )
-// }
