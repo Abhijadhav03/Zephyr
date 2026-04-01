@@ -2,6 +2,13 @@ import { Globe, UserIcon } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../hooks/useUser";
 
+interface NavbarProps {
+    onLogoClick: () => void;
+    onHistoryClick: () => void;
+    onBusinessClick: () => void;
+    currentView: string;
+}
+
 export function Navbar({ onLogoClick, onHistoryClick, onBusinessClick, currentView }: NavbarProps) {
     const { user, loading } = useUser("1");
 

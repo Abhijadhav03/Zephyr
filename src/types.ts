@@ -17,6 +17,60 @@ export type TransferData = {
     reason: string;
     paymentMethod: string;
 };
+export type TransferStatus = 'Completed' | 'Processing' | 'Pending' | 'Failed';
+
+export type TransferRecord = {
+    id: string;
+    date: string;
+    amount: number;
+    currency: string;
+    recipient: string;
+    status: TransferStatus;
+    receiveAmount: number;
+    receiveCurrency: string;
+};
+
+export type CurrencyPair = {
+    id: string;
+    pair: string;
+    rate: number;
+    change: string;
+    status: string;
+    description: string;
+};
+
+export const MOCK_HISTORY: TransferRecord[] = [
+    {
+        id: 'SL-9823-XJ21',
+        date: '2024-03-28T14:30:00Z',
+        amount: 1200,
+        currency: 'GBP',
+        recipient: 'Aditi Sharma',
+        status: 'Completed',
+        receiveAmount: 126450.20,
+        receiveCurrency: 'INR'
+    },
+    {
+        id: 'SL-7712-BK99',
+        date: '2024-03-25T09:15:00Z',
+        amount: 500,
+        currency: 'USD',
+        recipient: 'Rahul Verma',
+        status: 'Completed',
+        receiveAmount: 41560.00,
+        receiveCurrency: 'INR'
+    },
+    {
+        id: 'SL-4432-LP05',
+        date: '2024-03-20T18:45:00Z',
+        amount: 2500,
+        currency: 'EUR',
+        recipient: 'Priya Patel',
+        status: 'Processing',
+        receiveAmount: 226125.00,
+        receiveCurrency: 'INR'
+    }
+];
 
 export const SUPPORTED_CURRENCIES: Currency[] = [
     { code: 'GBP', name: 'British Pound', flag: 'https://flagcdn.com/w80/gb.png', country: 'United Kingdom' },

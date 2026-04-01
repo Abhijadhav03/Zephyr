@@ -113,7 +113,7 @@ export function Paymentmethod({ onNext, onBack, data }: PaymentMethodProps) {
                         <button onClick={onBack} className="text-primary font-bold hover:underline">Go Back</button>
                         <button
                             onClick={() => onNext({ paymentMethod: method })}
-                            className="bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+                            className="bg-emerald-500 text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
                         >
                             Continue to Payment
                         </button>
@@ -121,14 +121,14 @@ export function Paymentmethod({ onNext, onBack, data }: PaymentMethodProps) {
                 </div>
 
                 <div className="lg:col-span-5 space-y-6">
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-primary/5 border border-slate-100 space-y-8 sticky top-24">
-                        <h3 className="text-2xl font-bold text-primary font-headline">Transfer Summary</h3>
+                    <div className="bg-primary rounded-[2.5rem] p-8 shadow-xl shadow-primary/5 border border-slate-100 space-y-8 sticky top-24">
+                        <h3 className="text-2xl font-bold text-white font-headline">Transfer Summary</h3>
 
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
-                                    <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">You Send</span>
-                                    <div className="text-2xl font-bold text-primary">{data.sendAmount?.toLocaleString()} {data.sendCurrency?.code}</div>
+                                    <span className="text-xs font-bold text-on-surface-variant text-white/50 uppercase tracking-wider">You Send</span>
+                                    <div className="text-2xl font-bold text-white">{data.sendAmount?.toLocaleString()} {data.sendCurrency?.code}</div>
                                 </div>
                                 <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
                                     <ArrowRight size={20} className="-rotate-45" />
@@ -137,8 +137,8 @@ export function Paymentmethod({ onNext, onBack, data }: PaymentMethodProps) {
 
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
-                                    <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Recipient Receives</span>
-                                    <div className="text-2xl font-bold text-secondary">{recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} {data.receiveCurrency?.code}</div>
+                                    <span className="text-xs font-bold text-on-surface-variant text-white/50 uppercase tracking-wider">Recipient Receives</span>
+                                    <div className="text-2xl font-bold text-emerald-500">{recipientReceives.toLocaleString(undefined, { maximumFractionDigits: 2 })} {data.receiveCurrency?.code}</div>
                                 </div>
                                 <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
                                     <ArrowRight size={20} className="rotate-45" />
@@ -150,16 +150,16 @@ export function Paymentmethod({ onNext, onBack, data }: PaymentMethodProps) {
 
                         <div className="space-y-4">
                             <div className="flex justify-between text-sm">
-                                <span className="text-on-surface-variant">Exchange Rate</span>
-                                <span className="font-bold text-primary">1 {data.sendCurrency?.code} = {data.exchangeRate?.toFixed(4)} {data.receiveCurrency?.code}</span>
+                                <span className="text-white/50">Exchange Rate</span>
+                                <span className="font-bold text-white">1 {data.sendCurrency?.code} = {data.exchangeRate?.toFixed(4)} {data.receiveCurrency?.code}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-on-surface-variant">Transfer Fee</span>
-                                <span className="font-bold text-primary">£{data.fee?.toFixed(2)}</span>
+                                <span className="text-white/50">Transfer Fee</span>
+                                <span className="font-bold text-white">£{data.fee?.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-lg pt-2">
-                                <span className="font-bold text-primary">Total to Pay</span>
-                                <span className="font-black text-primary">£{totalToPay.toLocaleString()}</span>
+                                <span className="font-bold text-white">Total to Pay</span>
+                                <span className="font-black text-white">£{totalToPay.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

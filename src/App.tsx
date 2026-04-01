@@ -6,6 +6,7 @@ import { useTransferFlow } from './hooks/useTransferFlow'
 import { ChevronLeft } from 'lucide-react'
 import { Reciepientdetails } from './components/layout/features/transfer/Reciepientdetails'
 import { Paymentmethod } from './components/layout/features/transfer/Paymentmethod'
+import { ReviewTransfer } from './components/layout/features/transfer/ReviewTransfer'
 function App() {
 
   const {
@@ -64,6 +65,13 @@ function App() {
                 <Paymentmethod
                   data={transferData}
                   onNext={handleNext}
+                  onBack={handleBack}
+                />
+              )}
+              {step === 4 && (
+                <ReviewTransfer
+                  data={transferData}
+                  onNext={() => handleNext({})}
                   onBack={handleBack}
                 />
               )}
