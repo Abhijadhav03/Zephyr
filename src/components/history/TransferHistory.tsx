@@ -8,7 +8,6 @@ import {
     Search,
     Filter,
     ArrowRight,
-    Download,
 } from 'lucide-react';
 
 import type { TransferRecord, TransferStatus } from '../../types';

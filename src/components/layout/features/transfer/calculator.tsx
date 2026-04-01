@@ -18,7 +18,7 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
     const [sendCurrency, setSendCurrency] = useState<Currency>(initialData?.sendCurrency || SUPPORTED_CURRENCIES[0]);
     const [receiveCurrency, setReceiveCurrency] = useState<Currency>(initialData?.receiveCurrency || SUPPORTED_CURRENCIES[1]);
 
-    const { exchangeRate, isFetching, error, isUsingMock, lastUpdated, refetch } = useExchangeRate(sendCurrency, receiveCurrency);
+    const { exchangeRate, isFetching } = useExchangeRate(sendCurrency, receiveCurrency);
 
     const fee = sendCurrency.code === 'GBP' ? 2.50 : (sendCurrency.code === 'USD' ? 3.00 : 5.00);
     const recipientGets = (sendAmount - fee) * exchangeRate;
@@ -47,7 +47,6 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
                         <CurrencyDropdown
                             selected={sendCurrency}
                             onSelect={setSendCurrency}
-                            label="From"
                         />
                     </div>
                 </div>
@@ -90,7 +89,6 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
                     <CurrencyDropdown
                         selected={receiveCurrency}
                         onSelect={setReceiveCurrency}
-                        label="To"
                     />
                 </div>
             </div>
@@ -107,7 +105,7 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
 }
 
 
-function CurrencyDropdown({ selected, onSelect, label }: { selected: Currency, onSelect: (c: Currency) => void, label: string }) {
+function CurrencyDropdown({ selected, onSelect }: { selected: Currency, onSelect: (c: Currency) => void }) {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
 

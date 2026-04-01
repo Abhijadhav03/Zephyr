@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'motion/react';
-import { CheckCircle2, ShieldCheck, Globe, Zap, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Globe, Zap, TrendingUp } from 'lucide-react';
 import { Calculator } from './transfer/calculator';
 // import { Calculator } from './Calculator';
 // import { TransferData } from '../../../types';

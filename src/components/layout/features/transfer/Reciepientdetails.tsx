@@ -2,7 +2,7 @@ import { ShieldCheck, User, UserCheck } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 import type { TransferData } from "../../../../types";
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React from "react";
 
 interface ReciepientdetailsProps {
     onNext: (data: Partial<TransferData>) => void;

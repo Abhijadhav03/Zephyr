@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Currency, SUPPORTED_CURRENCIES } from '../types';
+import type { Currency } from '../types';
 
 export function useExchangeRate(sendCurrency: Currency, receiveCurrency: Currency) {
     const [exchangeRate, setExchangeRate] = useState<number>(108.42);
