@@ -97,7 +97,7 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
 
             <button
                 onClick={() => onNext({ sendAmount, sendCurrency, receiveCurrency, exchangeRate, fee })}
-                className="w-full bg-gradient-to-r from-primary to-primary-container text-white py-5 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
+                className="w-full mt-4 bg-gradient-to-r from-primary to-primary-container text-white py-5 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
             >
                 Send Money Now
             </button>

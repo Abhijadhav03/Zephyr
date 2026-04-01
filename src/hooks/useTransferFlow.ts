@@ -23,7 +23,11 @@ export function useTransferFlow() {
         setView('home');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
-
+    const handleViewHistory = useCallback(() => {
+        setView('history');
+        setStep(1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
     return {
         view,
@@ -32,5 +36,6 @@ export function useTransferFlow() {
         handleNext,
         handleBack,
         handleReset,
+        handleViewHistory
     };
 }
