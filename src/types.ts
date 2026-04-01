@@ -29,3 +29,4 @@ export const SUPPORTED_CURRENCIES: Currency[] = [
     { code: 'CAD', name: 'Canadian Dollar', flag: 'https://flagcdn.com/w80/ca.png', country: 'Canada' },
     { code: 'SGD', name: 'Singapore Dollar', flag: 'https://flagcdn.com/w80/sg.png', country: 'Singapore' },
 ];
+

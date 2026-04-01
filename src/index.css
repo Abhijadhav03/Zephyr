@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+
 
 /* :root {
   --text: #6b6375;
@@ -116,8 +118,6 @@ code {
   background: var(--code-bg);
 }
 
-@import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
 
 @theme {
   --font-headline: "Manrope", sans-serif;
