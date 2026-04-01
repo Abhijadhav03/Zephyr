@@ -5,10 +5,10 @@ import { Hero } from './components/layout/features/Hero'
 function App() {
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-surface-container-low">
       <Navbar />
 
-      <Hero />
+      <Hero onStartTransfer={() => { }} />
     </div>
   )
 }

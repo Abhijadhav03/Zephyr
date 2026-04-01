@@ -10,7 +10,7 @@ export function Navbar({ onLogoClick, onHistoryClick, onBusinessClick, currentVi
             <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
                 <div
                     onClick={onLogoClick}
-                    className="text-3xl font-bold text-primary font-headline tracking-tight cursor-pointer"
+                    className="text-3xl font-black text-primary font-headline tracking-tight cursor-pointer"
                 >
                     Zephyr
                 </div>
