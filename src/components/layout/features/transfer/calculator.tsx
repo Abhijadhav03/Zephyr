@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { type Currency, SUPPORTED_CURRENCIES, type TransferData } from '../../../../types';
-import { Divide, Minus, RefreshCw } from 'lucide-react';
+import { Check, ChevronDown, Divide, Minus, RefreshCw, Search } from 'lucide-react';
 import { useExchangeRate } from '../../../../hooks/useExchangerate';
+import { cn } from '../../../../lib/utils';
 
 
 interface CalculatorProps {
@@ -43,6 +44,11 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
                             className="bg-transparent border-none focus:ring-0 text-3xl font-headline font-bold text-primary w-full outline-none"
                             placeholder="0.00"
                         />
+                        <CurrencyDropdown
+                            selected={sendCurrency}
+                            onSelect={setSendCurrency}
+                            label="From"
+                        />
                     </div>
                 </div>
             </div>
@@ -81,6 +87,11 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
                     <div className="text-3xl font-headline font-bold text-primary">
                         {recipientGets.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
+                    <CurrencyDropdown
+                        selected={receiveCurrency}
+                        onSelect={setReceiveCurrency}
+                        label="To"
+                    />
                 </div>
             </div>
 
@@ -94,3 +105,123 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
         </motion.div>
     )
 }
+
+
+function CurrencyDropdown({ selected, onSelect, label }: { selected: Currency, onSelect: (c: Currency) => void, label: string }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const filtered = SUPPORTED_CURRENCIES.filter(c =>
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.code.toLowerCase().includes(search.toLowerCase()) ||
+        c.country.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <div className="relative">
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm cursor-pointer hover:bg-slate-50 transition-colors border border-slate-100"
+            >
+                <img
+                    src={selected.flag}
+                    alt={selected.code}
+                    className="w-6 h-6 rounded-full object-cover"
+                    referrerPolicy="no-referrer"
+                />
+                <span className="font-bold font-headline text-primary">{selected.code}</span>
+                <ChevronDown size={16} className={cn("text-primary/40 transition-transform", isOpen && "rotate-180")} />
+            </div>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="absolute right-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 z-50 overflow-hidden"
+                        >
+                            <div className="p-4 border-bottom border-slate-50 bg-slate-50/50">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        placeholder="Search country or currency..."
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className="w-full bg-white border-none rounded-xl py-2 pl-9 pr-4 text-sm focus:ring-2 focus:ring-primary/10 outline-none"
+                                    />
+                                </div>
+                            </div>
+                            <div className="max-h-64 overflow-y-auto p-2">
+                                {filtered.map((c) => (
+                                    <button
+                                        key={c.code}
+                                        onClick={() => {
+                                            onSelect(c);
+                                            setIsOpen(false);
+                                            setSearch('');
+                                        }}
+                                        className={cn(
+                                            "w-full flex items-center justify-between p-3 rounded-2xl transition-all hover:bg-slate-50 group",
+                                            selected.code === c.code && "bg-primary/5"
+                                        )}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <img src={c.flag} alt={c.code} className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
+                                            <div className="text-left">
+                                                <div className="text-sm font-bold text-primary">{c.code}</div>
+                                                <div className="text-[10px] text-on-surface-variant font-medium">{c.country}</div>
+                                            </div>
+                                        </div>
+                                        {selected.code === c.code && <Check size={16} className="text-primary" />}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+// function CurrencyDropdown({ selected, onSelect, label }: { selected: Currency, onSelect: (c: Currency) => void, label: string }) {
+//     const [isOpen, setIsOpen] = useState(false);
+//     return (
+//         <div className="relative">
+//             <label className="block text-sm font-bold text-on-surface-variant px-1">{label}</label>
+//             <button
+//                 onClick={() => setIsOpen(!isOpen)}
+//                 className="w-full bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between focus:ring-1 focus:ring-primary/20 transition-all"
+//             >
+//                 <div className="flex items-center gap-3">
+//                     <img src={selected.flag} alt={selected.code} className="w-8 h-8 rounded-full" />
+//                     <span className="text-lg font-bold text-primary">{selected.code}</span>
+//                 </div>
+//                 <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+//                 </svg>
+//             </button>
+//             {isOpen && (
+//                 <div className="absolute top-full left-0 right-0 bg-white rounded-2xl shadow-xl mt-2">
+//                     {SUPPORTED_CURRENCIES.map((currency) => (
+//                         <button
+//                             key={currency.code}
+//                             onClick={() => {
+//                                 onSelect(currency);
+//                                 setIsOpen(false);
+//                             }}
+//                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 transition-colors"
+//                         >
+//                             <img src={currency.flag} alt={currency.code} className="w-8 h-8 rounded-full" />
+//                             <span className="text-lg font-bold text-primary">{currency.code}</span>
+//                         </button>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//     )
+// }

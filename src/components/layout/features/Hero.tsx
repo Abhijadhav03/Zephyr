@@ -107,7 +107,7 @@ export function Hero({ onStartTransfer }: HeroProps) {
                 </div>
 
                 <div className="lg:col-span-6 flex justify-center lg:justify-end">
-                    <Calculator onNext={() => { }} />
+                    <Calculator onNext={onStartTransfer} />
                 </div>
             </div>
         </section>
