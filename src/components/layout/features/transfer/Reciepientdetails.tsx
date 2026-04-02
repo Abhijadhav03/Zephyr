@@ -1,4 +1,4 @@
-import { ShieldCheck, User, UserCheck } from "lucide-react";
+import { AlertCircle, ShieldCheck, User, UserCheck } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 import type { TransferData } from "../../../../types";
 import { motion } from "framer-motion";
@@ -16,10 +16,47 @@ export function Reciepientdetails({ onNext, onBack, data }: ReciepientdetailsPro
     const [bankName, setBankName] = React.useState<string>(data?.bankName || '');
     const [ifscCode, setIfscCode] = React.useState<string>(data?.ifscCode || '');
     const [reason, setReason] = React.useState(data?.reason || 'Family Support');
+    const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [accountNumber, setAccountNumber] = React.useState<string>(data?.accountNumber || '');
     const reasons = ['Family Support', 'Property Purchase', 'Investment', 'Gift', 'Other'];
     console.log(data);
     // console.log(type, recipientName, bankName, ifscCode, reason, accountNumber);
+    const validate = () => {
+        const newErrors: Record<string, string> = {};
+
+        if (!recipientName.trim()) {
+            newErrors.recipientName = "Recipient name is required";
+        } else if (recipientName.trim().length < 3) {
+            newErrors.recipientName = "Name must be at least 3 characters";
+        }
+
+        if (!bankName.trim()) {
+            newErrors.bankName = "Bank name is required";
+        }
+
+        if (!accountNumber.trim()) {
+            newErrors.accountNumber = "Account number is required";
+        } else if (!/^\d+$/.test(accountNumber)) {
+            newErrors.accountNumber = "Account number must contain only digits";
+        } else if (accountNumber.length < 9 || accountNumber.length > 18) {
+            newErrors.accountNumber = "Account number must be between 9 and 18 digits";
+        }
+
+        if (!ifscCode.trim()) {
+            newErrors.ifscCode = "IFSC code is required";
+        } else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) {
+            newErrors.ifscCode = "Invalid IFSC format (e.g. HDFC0001234)";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleNext = () => {
+        if (validate()) {
+            onNext({ recipientName, bankName, accountNumber, ifscCode, reason });
+        }
+    };
     return (
         <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -67,17 +104,39 @@ export function Reciepientdetails({ onNext, onBack, data }: ReciepientdetailsPro
                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Recipient's Full Name</label>
                     <input type="text" placeholder="eg: Rohit Sharma"
                         value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                    />
+                        onChange={(e) => {
+                            setRecipientName(e.target.value);
+                            if (errors.recipientName) setErrors({ ...errors, recipientName: '' });
+                        }}
+                        className={cn(
+                            "w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 transition-all font-medium",
+                            errors.recipientName ? "ring-2 ring-rose-500/20 bg-rose-50/30" : "focus:ring-primary/20"
+                        )} />
+                    {errors.recipientName && (
+                        <p className="text-xs text-rose-500 mt-1 px-1 flex items-center gap-1">
+                            <AlertCircle size={12} />
+                            {errors.recipientName}
+                        </p>
+                    )}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Bank Name</label>
                     <input type="text" placeholder="Start Typing Bank Name"
                         value={bankName}
-                        onChange={(e) => setBankName(e.target.value)}
-                        className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                    />
+                        onChange={(e) => {
+                            setBankName(e.target.value);
+                            if (errors.bankName) setErrors({ ...errors, bankName: '' });
+                        }}
+                        className={cn(
+                            "w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 transition-all font-medium",
+                            errors.bankName ? "ring-2 ring-rose-500/20 bg-rose-50/30" : "focus:ring-primary/20"
+                        )} />
+                    {errors.bankName && (
+                        <p className="text-xs text-rose-500 mt-1 px-1 flex items-center gap-1">
+                            <AlertCircle size={12} />
+                            {errors.bankName}
+                        </p>
+                    )}
                 </div>
 
                 <div className="flex gap-4">
@@ -86,17 +145,39 @@ export function Reciepientdetails({ onNext, onBack, data }: ReciepientdetailsPro
                         <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Account Number</label>
                         <input type="text" placeholder="eg: 1234567890"
                             value={accountNumber}
-                            onChange={(e) => setAccountNumber(e.target.value)}
-                            className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                        />
+                            onChange={(e) => {
+                                setAccountNumber(e.target.value);
+                                if (errors.accountNumber) setErrors({ ...errors, accountNumber: '' });
+                            }}
+                            className={cn(
+                                "w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 transition-all font-medium",
+                                errors.accountNumber ? "ring-2 ring-rose-500/20 bg-rose-50/30" : "focus:ring-primary/20"
+                            )} />
+                        {errors.accountNumber && (
+                            <p className="text-xs text-rose-500 mt-1 px-1 flex items-center gap-1">
+                                <AlertCircle size={12} />
+                                {errors.accountNumber}
+                            </p>
+                        )}
                     </div>
                     <div className="space-y-2 flex-1">
                         <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">IFSC Code</label>
                         <input type="text" placeholder="eg: HDFC0000001"
                             value={ifscCode}
-                            onChange={(e) => setIfscCode(e.target.value)}
-                            className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                        />
+                            onChange={(e) => {
+                                setIfscCode(e.target.value);
+                                if (errors.ifscCode) setErrors({ ...errors, ifscCode: '' });
+                            }}
+                            className={cn(
+                                "w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 transition-all font-medium",
+                                errors.ifscCode ? "ring-2 ring-rose-500/20 bg-rose-50/30" : "focus:ring-primary/20"
+                            )} />
+                        {errors.ifscCode && (
+                            <p className="text-xs text-rose-500 mt-1 px-1 flex items-center gap-1">
+                                <AlertCircle size={12} />
+                                {errors.ifscCode}
+                            </p>
+                        )}
                     </div>
 
                 </div>
@@ -130,7 +211,7 @@ export function Reciepientdetails({ onNext, onBack, data }: ReciepientdetailsPro
                 <div className="flex items-center justify-between pt-4">
                     <button onClick={onBack} className="text-primary font-bold hover:underline">Go Back</button>
                     <button
-                        onClick={() => onNext({ recipientName, bankName, accountNumber, ifscCode, reason })}
+                        onClick={handleNext}
                         className="bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
                     >
                         Continue to Payment

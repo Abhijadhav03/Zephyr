@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { type Currency, SUPPORTED_CURRENCIES, type TransferData } from '../../../../types';
-import { Check, ChevronDown, Divide, Minus, RefreshCw, Search } from 'lucide-react';
+import { Check, ChevronDown, Divide, Info, Minus, RefreshCw, Search } from 'lucide-react';
 import { useExchangeRate } from '../../../../hooks/useExchangerate';
 import { cn } from '../../../../lib/utils';
 
@@ -18,12 +18,22 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
     const [sendCurrency, setSendCurrency] = useState<Currency>(initialData?.sendCurrency || SUPPORTED_CURRENCIES[0]);
     const [receiveCurrency, setReceiveCurrency] = useState<Currency>(initialData?.receiveCurrency || SUPPORTED_CURRENCIES[1]);
 
-    const { exchangeRate, isFetching } = useExchangeRate(sendCurrency, receiveCurrency);
+    const { exchangeRate, isFetching, error, refetch } = useExchangeRate(sendCurrency, receiveCurrency);
 
     const fee = sendCurrency.code === 'GBP' ? 2.50 : (sendCurrency.code === 'USD' ? 3.00 : 5.00);
-    const recipientGets = (sendAmount - fee) * exchangeRate;
+    const recipientGets = Math.max(0, (sendAmount - fee) * exchangeRate);
     // const [receiveCurrency, setReceiveCurrency] = useState<Currency>(SUPPORTED_CURRENCIES[1]);
     // console.log(sendAmount);
+    const [validationError, setValidationError] = useState<string | null>(null);
+
+    const handleNext = () => {
+        if (sendAmount <= fee) {
+            setValidationError(`Amount must be greater than the fee (${fee.toFixed(2)} ${sendCurrency.code})`);
+            return;
+        }
+        setValidationError(null);
+        onNext({ sendAmount, sendCurrency, receiveCurrency, exchangeRate, fee });
+    };
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -92,9 +102,59 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
                     />
                 </div>
             </div>
+            {/* Error/Fallback Message */}
+            <AnimatePresence>
+                {(error || validationError) && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className={cn(
+                            "rounded-2xl p-4 space-y-3 border",
+                            validationError ? "bg-rose-50 border-rose-200" : "bg-error-container/10 border-error/20"
+                        )}
+                    >
+                        <div className="flex items-start gap-3">
+                            <div className={cn(
+                                "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                                validationError ? "bg-rose-100 text-rose-600" : "bg-error/10 text-error"
+                            )}>
+                                <Info size={12} />
+                            </div>
+                            <div className="flex-1">
+                                <p className={cn(
+                                    "text-xs font-bold leading-tight",
+                                    validationError ? "text-rose-700" : "text-error"
+                                )}>
+                                    {validationError || error}
+                                </p>
+                                {!validationError && (
+                                    <p className="text-[10px] text-on-surface-variant mt-1 leading-relaxed">
+                                        If this persists, please check your connection or contact our 24/7 support team.
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        {!validationError && (
+                            <div className="flex items-center gap-2 pt-1">
+                                <button
+                                    onClick={() => refetch()}
+                                    className="text-[10px] font-bold text-primary px-3 py-1.5 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors flex items-center gap-1.5"
+                                >
+                                    <RefreshCw size={10} className={cn(isFetching && "animate-spin")} />
+                                    Retry Connection
+                                </button>
+                                <button className="text-[10px] font-bold text-on-surface-variant px-3 py-1.5 hover:bg-surface-container rounded-lg transition-colors">
+                                    Contact Support
+                                </button>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <button
-                onClick={() => onNext({ sendAmount, sendCurrency, receiveCurrency, exchangeRate, fee })}
+                onClick={handleNext}
                 className="w-full mt-4 bg-gradient-to-r from-primary to-primary-container text-white py-5 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98] cursor-pointer"
             >
                 Send Money Now
