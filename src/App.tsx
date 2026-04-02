@@ -9,7 +9,7 @@ import { Reciepientdetails } from './components/layout/features/transfer/Reciepi
 import { Paymentmethod } from './components/layout/features/transfer/Paymentmethod';
 import { ReviewTransfer } from './components/layout/features/transfer/ReviewTransfer';
 import { SuccessScreen } from './components/layout/features/transfer/SuccessScreen';
-import TransferHistory  from './components/history/TransferHistory';
+import TransferHistory from './components/history/TransferHistory';
 
 function App() {
   const {
@@ -61,13 +61,13 @@ function App() {
 
             {/* Steps 2 to 5: Transfer Form Flow */}
             {step > 1 && step < 6 && (
-              <div className="py-12 px-6">
+              <div className="py-8 sm:py-12 px-4 sm:px-6">
                 <div className="max-w-7xl mx-auto">
                   {/* Back Button (hide on success screen) */}
                   {step < 5 && (
                     <button
                       onClick={handleBack}
-                      className="flex items-center gap-2 text-primary font-bold mb-8 hover:gap-3 transition-all duration-200"
+                      className="flex items-center gap-2 text-primary font-bold mb-6 sm:mb-8 hover:gap-3 transition-all text-sm sm:text-base"
                     >
                       <ChevronLeft size={20} />
                       Back

@@ -61,20 +61,20 @@ export function Hero({ onStartTransfer }: HeroProps) {
             </div>
 
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
-                <div className="lg:col-span-6 space-y-8">
+                <div className="lg:col-span-6 space-y-6 sm:space-y-8 text-center lg:text-left">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest mb-6 border border-primary/10">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4 sm:mb-6 border border-primary/10">
                             <span className="relative flex h-2 w-2">
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                             </span>
                             Next Generation Remittance
                         </div>
 
-                        <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tighter text-fuchsia-700 leading-[1.1]">
+                        <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tighter text-fuchsia-700 leading-[1.1]">
                             Institutional Grade <span className="text-secondary">Money Movement.</span>
                         </h1>
                     </motion.div>
@@ -83,7 +83,7 @@ export function Hero({ onStartTransfer }: HeroProps) {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.1 }}
-                        className="text-xl text-on-surface-variant max-w-lg leading-relaxed"
+                        className="text-lg sm:text-xl text-on-surface-variant max-w-lg leading-relaxed"
                     >
                         Experience the gold standard in international transfers. Fast, secure, and completely transparent conversions from GBP to INR and 40+ other currencies.
                     </motion.p>
@@ -92,20 +92,20 @@ export function Hero({ onStartTransfer }: HeroProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="flex flex-wrap gap-4 pt-4"
+                        className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 pt-2 sm:pt-4"
                     >
-                        <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-full shadow-sm border border-outline-variant/10">
-                            <CheckCircle2 className="text-secondary w-4 h-4" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">FCA Regulated</span>
+                        <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-sm border border-outline-variant/10">
+                            <CheckCircle2 className="text-secondary w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-on-surface-variant">FCA Regulated</span>
                         </div>
-                        <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-full shadow-sm border border-outline-variant/10">
-                            <ShieldCheck className="text-secondary w-4 h-4" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Bank-Grade Security</span>
+                        <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-sm border border-outline-variant/10">
+                            <ShieldCheck className="text-secondary w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-on-surface-variant">Bank-Grade Security</span>
                         </div>
                     </motion.div>
                 </div>
 
-                <div className="lg:col-span-6 flex justify-center lg:justify-end">
+                <div className="lg:col-span-6 flex justify-center lg:justify-end w-full max-w-lg mx-auto lg:max-w-none">
                     <Calculator onNext={onStartTransfer} />
                 </div>
             </div>

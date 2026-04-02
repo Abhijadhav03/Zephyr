@@ -101,8 +101,8 @@ export default function TransferHistory() {
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Main Table Section */}
                 <div className="flex-grow space-y-8">
-                    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
+                    <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-50/50 border-b border-slate-100">
@@ -186,6 +186,64 @@ export default function TransferHistory() {
                                     ) : null}
                                 </tbody>
                             </table>
+                        </div>
+
+
+                        {/* Mobile List */}
+                        <div className="md:hidden divide-y divide-slate-100">
+                            {loading ? (
+                                <div className="px-6 py-12 text-center">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                        <p className="text-on-surface-variant font-bold">Fetching secure records...</p>
+                                    </div>
+                                </div>
+                            ) : filteredHistory.map((record, idx) => (
+                                <motion.div
+                                    key={record.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="p-6 space-y-4"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary font-bold">
+                                                {record.recipient.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-primary">{record.recipient}</div>
+                                                <div className="text-[10px] text-on-surface-variant font-mono">{record.id}</div>
+                                            </div>
+                                        </div>
+                                        <StatusBadge status={record.status} />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 pt-2">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Sent</p>
+                                            <p className="font-headline font-bold text-primary">{record.amount.toLocaleString()} {record.currency}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Received</p>
+                                            <p className="font-headline font-bold text-secondary">{record.receiveAmount.toLocaleString()} {record.receiveCurrency}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between pt-2">
+                                        <span className="text-xs text-on-surface-variant">
+                                            {new Date(record.date).toLocaleDateString('en-GB', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            })}
+                                        </span>
+                                        <button className="text-xs font-bold text-primary flex items-center gap-1">
+                                            Details <ArrowRight size={14} />
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            ))}
                         </div>
 
                         {/* Empty State */}

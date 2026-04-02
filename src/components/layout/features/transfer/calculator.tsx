@@ -39,19 +39,19 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-[2.5rem] p-8 shadow-2xl shadow-primary/5 border border-outline-variant/10 w-full max-w-lg"
+            className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-8 shadow-2xl shadow-primary/5 border border-outline-variant/10 w-full max-w-lg mx-auto"
         >
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
 
                 <div className="space-y-2">
 
-                    <label className="block text-sm font-bold text-on-surface-variant px-1">You Send</label>
-                    <div className="bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between group focus-within:bg-white focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+                    <label className="block text-xs sm:text-sm font-bold text-on-surface-variant px-1">You Send</label>
+                    <div className="bg-surface-container-highest rounded-xl sm:rounded-2xl p-4 flex items-center justify-between group focus-within:bg-white focus-within:ring-1 focus-within:ring-primary/20 transition-all">
                         <input
                             type="number"
                             value={sendAmount}
                             onChange={(e) => setSendAmount(Number(e.target.value))}
-                            className="bg-transparent border-none focus:ring-0 text-3xl font-headline font-bold text-primary w-full outline-none"
+                            className="bg-transparent border-none focus:ring-0 text-2xl sm:text-3xl font-headline font-bold text-primary w-full outline-none"
                             placeholder="0.00"
                         />
                         <CurrencyDropdown
@@ -63,23 +63,23 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
             </div>
 
 
-            <div className="relative px-4 py-2">
-                <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/30 to-primary/10"></div>
-                <div className="space-y-4 relative z-10">
-                    <div className="flex items-center gap-6">
-                        <div className="w-8 h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                            <Minus size={14} />
+            <div className="relative px-2 sm:px-4 py-2">
+                <div className="absolute left-6 sm:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/10 via-primary/30 to-primary/10"></div>
+                <div className="space-y-3 sm:space-y-4 relative z-10">
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8  rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-[10px] sm:text-xs shrink-0">
+                            <Minus size={12} />
                         </div>
-                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-4 py-3 rounded-2xl flex justify-between items-center text-sm">
+                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-4 py-3 rounded-2xl flex justify-between items-center text-xs sm:text-sm">
                             <span className="text-on-surface-variant">Transaction Fee</span>
                             <span className="font-bold text-primary">{fee.toFixed(2)} {sendCurrency.code}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <div className="w-8 h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                            <Divide size={14} />
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary font-bold text-[10px] sm:text-xs shrink-0">
+                            <Divide size={12} />
                         </div>
-                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-4 py-3 rounded-2xl flex justify-between items-center text-sm">
+                        <div className="flex-1 bg-white/40 backdrop-blur-md border border-white/20 px-2 py-2 sm:px-4 sm:py-3 rounded-2xl flex justify-between items-center text-xs sm:text-sm">
                             <span className="text-on-surface-variant">Exchange Rate</span>
                             <div className="flex items-center gap-2">
                                 {isFetching && <RefreshCw size={12} className="animate-spin text-primary/40" />}
@@ -91,9 +91,9 @@ export function Calculator({ onNext, initialData }: CalculatorProps) {
             </div>
             <div className="space-y-2">
 
-                <label className="block text-sm font-bold text-on-surface-variant px-1">Recipient Gets</label>
-                <div className="bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between">
-                    <div className="text-3xl font-headline font-bold text-primary">
+                <label className="block text-xs sm:text-sm font-bold text-on-surface-variant px-1">Recipient Gets</label>
+                <div className="bg-surface-container-highest rounded-xl sm:rounded-2xl p-4 flex items-center justify-between">
+                    <div className="text-2xl sm:text-3xl font-headline font-bold text-primary">
                         {recipientGets.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <CurrencyDropdown
